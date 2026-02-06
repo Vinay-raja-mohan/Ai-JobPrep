@@ -74,6 +74,7 @@ export default function ResumeBuilderPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-gemini-api-key': localStorage.getItem('gemini_api_key') || ''
         },
         body: JSON.stringify({
           resumeData,

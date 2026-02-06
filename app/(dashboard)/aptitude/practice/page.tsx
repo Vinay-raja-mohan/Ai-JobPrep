@@ -37,7 +37,10 @@ function PracticeContent() {
       const res = await fetch("/api/aptitude/generate", {
         method: "POST",
         body: JSON.stringify({ topic }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
+        }
       })
 
       if (!res.ok) throw new Error("Failed to generate quiz")

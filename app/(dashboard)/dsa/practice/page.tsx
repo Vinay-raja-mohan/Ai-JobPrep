@@ -59,7 +59,10 @@ function PracticeContent() {
       const res = await fetch("/api/dsa/generate", {
         method: "POST",
         body: JSON.stringify({ topic }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
+        }
       })
       const data = await res.json()
       setProblem(data)
@@ -81,7 +84,10 @@ function PracticeContent() {
       const res = await fetch("/api/dsa/judge", {
         method: "POST",
         body: JSON.stringify({ code, problem: problem, language }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
+        }
       })
       const result = await res.json()
 

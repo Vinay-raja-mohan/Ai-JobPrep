@@ -44,7 +44,10 @@ export default function MentorChatPage() {
           previousMessages: messages.slice(-5),
           userEmail: JSON.parse(localStorage.getItem("user") || "{}").email
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
+        }
       })
 
       const data = await res.json()

@@ -56,10 +56,14 @@ function PracticeContent() {
     setLoading(true)
     setHint("")
     try {
+      const apiKey = localStorage.getItem("gemini_api_key") || "";
       const res = await fetch("/api/dsa/generate", {
         method: "POST",
         body: JSON.stringify({ topic }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": apiKey
+        }
       })
       const data = await res.json()
       setProblem(data)
@@ -78,10 +82,14 @@ function PracticeContent() {
   async function handleSubmit() {
     setVerifying(true)
     try {
+      const apiKey = localStorage.getItem("gemini_api_key") || "";
       const res = await fetch("/api/dsa/judge", {
         method: "POST",
         body: JSON.stringify({ code, problem: problem, language }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": apiKey
+        }
       })
       const result = await res.json()
 

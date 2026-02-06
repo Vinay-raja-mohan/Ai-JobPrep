@@ -67,15 +67,15 @@ export default function SettingsPage() {
       localStorage.setItem("user", JSON.stringify(updatedUser))
       setUser(updatedUser)
 
-      // Trigger Roadmap Generation
-      const apiKey = localStorage.getItem("gemini_api_key");
-      const headers: any = { "Content-Type": "application/json" };
-      if (apiKey) headers["x-gemini-api-key"] = apiKey;
-
+      // 2. Regenerate Roadmap
+      const apiKey = localStorage.getItem("gemini_api_key") || "";
       const genRes = await fetch("/api/roadmap/generate", {
         method: "POST",
         body: JSON.stringify({ email: user.email }),
-        headers: headers,
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": apiKey
+        }
       })
 
       if (!genRes.ok) {

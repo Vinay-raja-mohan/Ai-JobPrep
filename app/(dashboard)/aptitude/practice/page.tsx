@@ -34,10 +34,14 @@ function PracticeContent() {
     try {
       // In a real app, this would call an API. For now, we simulate AI generation or fetch from an endpoint.
       // Let's call our Gemini API to get questions dynamically!
+      const apiKey = localStorage.getItem("gemini_api_key") || "";
       const res = await fetch("/api/aptitude/generate", {
         method: "POST",
         body: JSON.stringify({ topic }),
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": apiKey
+        }
       })
 
       if (!res.ok) throw new Error("Failed to generate quiz")

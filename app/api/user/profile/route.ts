@@ -23,7 +23,8 @@ export async function PATCH(req: Request) {
       shields: 0,
       points: 0,
       totalStudyTime: { aptitude: 0, dsa: 0, core: 0 },
-      lastActiveDate: new Date() // Reset active date to now
+      lastActiveDate: new Date(), // Reset active date to now
+      lastStreakIncrement: null // Allow streak to start fresh today
     };
 
     const user = await User.findOneAndUpdate(

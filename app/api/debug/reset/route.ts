@@ -16,7 +16,6 @@ export async function GET(req: Request) {
     // Or better, let's find the specific user if possible.
 
     // For safety in this dev environment, I'll just update the user with email "vinay..." or just the first user found.
-    // The user's screenshot showed "Hello, Vinay!".
 
     const updateResult = await User.updateMany(
       {},

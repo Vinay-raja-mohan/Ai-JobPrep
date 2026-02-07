@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, Trash2, Printer, Download, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function ResumeBuilderPage() {
   const [activeTab, setActiveTab] = useState("optimize")
@@ -29,7 +30,8 @@ export default function ResumeBuilderPage() {
       { category: "Tools", items: "Git, Docker, VS Code" }
     ] as { category: string, items: string }[],
     projects: [] as any[],
-    certifications: [] as string[]
+    certifications: [] as string[],
+    customSections: [] as { id: string, title: string, items: string[] }[]
   })
 
   const printRef = useRef<HTMLDivElement>(null)
@@ -262,6 +264,53 @@ export default function ResumeBuilderPage() {
     })
   }
 
+  // --- Custom Section Helpers ---
+  const addCustomSection = () => {
+    setResumeData(prev => ({
+      ...prev,
+      customSections: [...(prev.customSections || []), { id: Date.now().toString(), title: "New Section", items: [""] }]
+    }))
+  }
+  const updateCustomSectionTitle = (index: number, title: string) => {
+    setResumeData(prev => {
+      const newSecs = [...(prev.customSections || [])];
+      newSecs[index] = { ...newSecs[index], title };
+      return { ...prev, customSections: newSecs };
+    })
+  }
+  const removeCustomSection = (index: number) => {
+    setResumeData(prev => {
+      const newSecs = [...(prev.customSections || [])];
+      newSecs.splice(index, 1);
+      return { ...prev, customSections: newSecs };
+    })
+  }
+  const addCustomSectionItem = (secIndex: number) => {
+    setResumeData(prev => {
+      const newSecs = [...(prev.customSections || [])];
+      newSecs[secIndex] = { ...newSecs[secIndex], items: [...(newSecs[secIndex].items || []), ""] };
+      return { ...prev, customSections: newSecs };
+    })
+  }
+  const updateCustomSectionItem = (secIndex: number, itemIndex: number, value: string) => {
+    setResumeData(prev => {
+      const newSecs = [...(prev.customSections || [])];
+      const newItems = [...(newSecs[secIndex].items || [])];
+      newItems[itemIndex] = value;
+      newSecs[secIndex] = { ...newSecs[secIndex], items: newItems };
+      return { ...prev, customSections: newSecs };
+    })
+  }
+  const removeCustomSectionItem = (secIndex: number, itemIndex: number) => {
+    setResumeData(prev => {
+      const newSecs = [...(prev.customSections || [])];
+      const newItems = [...(newSecs[secIndex].items || [])];
+      newItems.splice(itemIndex, 1);
+      newSecs[secIndex] = { ...newSecs[secIndex], items: newItems };
+      return { ...prev, customSections: newSecs };
+    })
+  }
+
 
   return (
     <div className="p-4 md:p-8 max-w-[1800px] mx-auto space-y-8">
@@ -288,13 +337,14 @@ export default function ResumeBuilderPage() {
         <div className="space-y-6 no-print h-[calc(100vh-100px)] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-slate-700 pb-20">
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-slate-800 text-slate-400">
+            <TabsList className="grid w-full grid-cols-7 bg-slate-800 text-slate-400">
               <TabsTrigger value="optimize" className="text-blue-400 data-[state=active]:text-blue-300 data-[state=active]:bg-blue-900/30"><Sparkles className="w-3 h-3 mr-1" /> AI</TabsTrigger>
               <TabsTrigger value="bio">Bio</TabsTrigger>
               <TabsTrigger value="edu">Edu</TabsTrigger>
               <TabsTrigger value="skills">Skills</TabsTrigger>
               <TabsTrigger value="projects">Work</TabsTrigger>
               <TabsTrigger value="certs">Certs</TabsTrigger>
+              <TabsTrigger value="custom">Custom</TabsTrigger>
             </TabsList>
 
             {/* 1. PERSONAL (Bio) */}
@@ -334,11 +384,52 @@ export default function ResumeBuilderPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-slate-300">Career Objective</Label>
+                    <div className="flex justify-between items-center">
+                      <Label className="text-slate-300">Career Objective</Label>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                        onClick={async () => {
+                          if (!resumeData.careerObjective) return;
+                          const originalText = resumeData.careerObjective;
+                          setIsOptimizing(true); // Reuse loading state or add new one? reused for simplicity
+                          try {
+                            const res = await fetch("/api/resume/improve-objective", {
+                              method: "POST",
+                              body: JSON.stringify({
+                                currentObjective: originalText,
+                                jobDescription: jobDescription // Optional context
+                              }),
+                              headers: {
+                                "Content-Type": "application/json",
+                                "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
+                              }
+                            });
+                            const data = await res.json();
+                            if (data.improvedObjective) {
+                              updateField("careerObjective", data.improvedObjective);
+                              toast.success("Objective improved!");
+                            }
+                          } catch (e) {
+                            console.error(e);
+                            toast.error("Failed to improve text");
+                          } finally {
+                            setIsOptimizing(false);
+                          }
+                        }}
+                        disabled={isOptimizing || !resumeData.careerObjective}
+                        type="button"
+                      >
+                        {isOptimizing ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                        Improve Writing
+                      </Button>
+                    </div>
                     <Textarea
                       className="bg-slate-950 border-slate-800 text-white min-h-[120px] leading-relaxed"
                       value={resumeData.careerObjective}
                       onChange={e => updateField("careerObjective", e.target.value)}
+                      placeholder="Write a brief summary of your career goals..."
                     />
                   </div>
                 </CardContent>
@@ -469,7 +560,63 @@ export default function ResumeBuilderPage() {
               </Card>
             </TabsContent>
 
-            {/* 6. AI OPTIMIZER */}
+            {/* 6. CUSTOM SECTIONS */}
+            <TabsContent value="custom" className="space-y-4 mt-4">
+              <Card className="bg-slate-900 border-slate-800">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-white">Custom Sections</CardTitle>
+                    <CardDescription>Add sections like Awards, Volunteering, Languages, etc.</CardDescription>
+                  </div>
+                  <Button size="sm" onClick={addCustomSection} className="bg-blue-600 hover:bg-blue-500"><Plus className="w-4 h-4 mr-1" /> Add Section</Button>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {(resumeData.customSections || []).map((sec, secIdx) => (
+                    <div key={sec.id} className="p-4 border border-slate-700 rounded-lg bg-slate-950/50 space-y-3 relative">
+                      <Button size="icon" variant="ghost" className="absolute top-2 right-2 text-red-400 hover:bg-red-900/20" onClick={() => removeCustomSection(secIdx)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+
+                      <div className="space-y-1">
+                        <Label className="text-slate-400 text-xs uppercase">Section Title</Label>
+                        <Input
+                          className="bg-slate-900 border-slate-700 text-blue-200 font-bold"
+                          placeholder="e.g. Achivements"
+                          value={sec.title}
+                          onChange={e => updateCustomSectionTitle(secIdx, e.target.value)}
+                        />
+                      </div>
+
+                      <div className="space-y-2 pl-2 border-l-2 border-slate-700">
+                        <Label className="text-slate-400 text-xs uppercase">Items / Points</Label>
+                        {(sec.items || []).map((item, itemIdx) => (
+                          <div key={itemIdx} className="flex gap-2">
+                            <Input
+                              className="bg-slate-900 border-slate-700 text-slate-200 text-sm"
+                              value={item}
+                              onChange={e => updateCustomSectionItem(secIdx, itemIdx, e.target.value)}
+                            />
+                            <Button size="icon" variant="ghost" className="h-10 w-10 text-slate-500 hover:text-red-400" onClick={() => removeCustomSectionItem(secIdx, itemIdx)}>
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button size="sm" variant="outline" onClick={() => addCustomSectionItem(secIdx)} className="text-slate-400 border-slate-700 hover:bg-slate-800 w-full mt-2">
+                          <Plus className="w-3 h-3 mr-2" /> Add Item
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {(resumeData.customSections || []).length === 0 && (
+                    <div className="text-center py-8 text-slate-500 border-2 border-dashed border-slate-800 rounded-lg">
+                      No custom sections added yet.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* 7. AI OPTIMIZER */}
             <TabsContent value="optimize" className="space-y-4 mt-4">
               <Card className="bg-slate-900 border-slate-800 border-l-4 border-l-blue-500">
                 <CardHeader>
@@ -590,6 +737,18 @@ export default function ResumeBuilderPage() {
               ))}
             </ul>
           </div>
+
+          {/* CUSTOM SECTIONS */}
+          {resumeData.customSections?.map((sec) => (
+            <div className="mb-5" key={sec.id}>
+              <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">{sec.title}:</div>
+              <ul className="list-disc ml-5 space-y-1">
+                {(sec.items || []).map((item, idx) => (
+                  <li key={idx} className="text-[10pt]">{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
         </div>
       </div>

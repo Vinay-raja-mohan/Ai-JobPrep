@@ -1,15 +1,59 @@
-# AI Job Prep
+# 🚀 AI JobPrep
 
-An AI-powered placement preparation platform.
+**Your AI-Powered Placement Preparation Mentor**
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Version](https://img.shields.io/badge/version-1.0.0-orange)
+AI JobPrep is a comprehensive, intelligent platform designed to help students crack their dream jobs through personalized roadmaps, daily missions, and AI-driven mock interviews. Built with Next.js and powered by Google's Generative AI and OpenAI, it provides everything needed for Aptitude, DSA, and Core Subjects preparation in one unified dashboard.
 
-## Key Features
+[![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![React](https://img.shields.io/badge/React-19.2-blue?style=flat-square&logo=react)](https://react.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-- **AI Roadmaps**: Tailored learning paths to guide users through their preparation journey.
-- **Daily Missions**: Engage with daily tasks to keep your learning on track.
-- **Gamified Growth**: Earn points and rewards for completing objectives.
-- **Smart Tracking**: Monitor your progress seamlessly.
+## ✨ Features
+
+### 🎯 AI Roadmaps
+Generate custom preparation schedules tailored to your target role and timeline. Get a structured path that adapts to your learning pace and career goals.
+
+### ✅ Daily Missions
+Stay consistent with bite-sized, achievable tasks across three key areas:
+- **Aptitude**: Logical reasoning, quantitative ability, and verbal skills
+- **Data Structures & Algorithms (DSA)**: Coding problems with varying difficulty levels
+- **Core Subjects**: Technical fundamentals relevant to your target position
+
+### 🏆 Gamified Growth
+Make learning addictive and engaging:
+- Earn XP points for completing tasks
+- Build streaks to maintain consistency
+- Unlock badges for milestones
+- Track your progress on leaderboards
+
+### 📊 Smart Tracking
+Monitor your preparation journey with detailed analytics:
+- Study hours tracking
+- Topic mastery progress
+- Performance metrics across different skill areas
+- Personalized insights and recommendations
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 16.1, React 19.2, TypeScript
+- **Styling**: Tailwind CSS 4, Radix UI components
+- **AI Integration**: Google Generative AI, OpenAI
+- **Database**: MongoDB with Mongoose
+- **Forms**: React Hook Form with Zod validation
+- **Authentication**: Bcryptjs for secure password hashing
+- **UI Components**: shadcn/ui built with Radix UI
+- **Icons**: Lucide React
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ and npm or yarn
+- MongoDB instance (local or cloud-based like MongoDB Atlas)
+- API keys for:
+  - Google Generative AI
+  - OpenAI
 
 ## Installation and Setup
 

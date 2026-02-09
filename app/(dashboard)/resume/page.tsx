@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -33,6 +33,34 @@ export default function ResumeBuilderPage() {
     certifications: [] as string[],
     customSections: [] as { id: string, title: string, items: string[] }[]
   })
+
+
+
+  // --- Persistence ---
+  useEffect(() => {
+    const saved = localStorage.getItem("resumeData");
+    if (saved) {
+      try {
+        setResumeData(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to load resume data", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("resumeData", JSON.stringify(resumeData));
+  }, [resumeData]);
+
+  const handleReset = () => {
+    if (confirm("Are you sure? This will clear all your data.")) {
+      setResumeData({
+        fullName: "", email: "", phone: "", linkedin: "", github: "", careerObjective: "",
+        education: [], skills: [{ category: "Languages", items: "" }], projects: [], certifications: [], customSections: []
+      });
+      localStorage.removeItem("resumeData");
+    }
+  }
 
   const printRef = useRef<HTMLDivElement>(null)
 
@@ -328,6 +356,9 @@ export default function ResumeBuilderPage() {
           <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-500">
             <Printer className="w-4 h-4 mr-2" /> Print / Save PDF
           </Button>
+          <Button variant="destructive" onClick={handleReset} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/50">
+            <Trash2 className="w-4 h-4 mr-2" /> Reset
+          </Button>
         </div>
       </div>
 
@@ -445,10 +476,13 @@ export default function ResumeBuilderPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {resumeData.education?.map((edu, idx) => (
-                    <div key={idx} className="p-4 border border-slate-700 rounded-lg bg-slate-950/50 space-y-3 relative">
-                      <Button size="icon" variant="ghost" className="absolute top-2 right-2 text-red-400" onClick={() => removeEducation(idx)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div key={idx} className="p-4 border border-slate-700 rounded-lg bg-slate-950/50 space-y-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-bold text-slate-500 uppercase">Education #{idx + 1}</span>
+                        <Button size="sm" variant="ghost" className="text-red-400 hover:bg-red-900/20 h-8 w-8 p-0" onClick={() => removeEducation(idx)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                       <Input className="bg-slate-900 border-slate-700 text-white font-bold" placeholder="Institution Name" value={edu.school} onChange={e => updateEducation(idx, "school", e.target.value)} />
                       <Input className="bg-slate-900 border-slate-700 text-white" placeholder="Degree / Stream" value={edu.degree} onChange={e => updateEducation(idx, "degree", e.target.value)} />
                       <div className="grid grid-cols-2 gap-4">
@@ -648,11 +682,11 @@ export default function ResumeBuilderPage() {
         {/* === PREVIEW SECTION (Right) === */}
         {/* Using standard A4 proportions (roughly 1:1.414) */}
         {/* Font size 10pt-11pt equivalent */}
-        <div className="border border-white/10 shadow-2xl bg-white text-black print:w-[210mm] print:h-[297mm] print:absolute print:top-0 print:left-0 print:m-0 print:z-50 print:overflow-hidden overflow-hidden min-h-[1100px] w-full max-w-[850px] mx-auto p-[40px]" ref={printRef}>
+        <div id="resume-preview" className="border border-white/10 shadow-2xl bg-white text-black print:w-full print:h-auto print:static print:m-0 print:border-none print:shadow-none print:overflow-visible print:p-[15mm] overflow-hidden min-h-[1100px] w-full max-w-[850px] mx-auto p-[40px]" ref={printRef}>
 
           {/* HEADER */}
-          <div className="text-center mb-6">
-            <h1 className="text-[24px] font-bold uppercase tracking-wide mb-1.5">{resumeData.fullName}</h1>
+          <div className="text-center mb-6 print:mb-2">
+            <h1 className="text-[24px] font-bold uppercase tracking-wide mb-1.5 print:mb-0.5">{resumeData.fullName}</h1>
             <div className="text-[10pt] text-black space-y-0.5">
               <div>
                 <span className="mr-2">{resumeData.phone}</span>
@@ -669,7 +703,8 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* OBJECTIVE */}
-          <div className="mb-5">
+          {/* OBJECTIVE */}
+          <div className="mb-5 print:mb-3 break-inside-avoid">
             <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">CAREER OBJECTIVE:</div>
             <p className="text-[10pt] leading-snug text-justify">
               {resumeData.careerObjective}
@@ -677,7 +712,8 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* EDUCATION */}
-          <div className="mb-5">
+          {/* EDUCATION */}
+          <div className="mb-5 print:mb-3 break-inside-avoid">
             <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">EDUCATION QUALIFICATION:</div>
             <div className="space-y-3">
               {resumeData.education?.map((edu, i) => (
@@ -696,7 +732,8 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* TECHNICAL SKILLS */}
-          <div className="mb-5">
+          {/* TECHNICAL SKILLS */}
+          <div className="mb-5 print:mb-3 break-inside-avoid">
             <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">TECHNICAL SKILLS:</div>
             <div className="text-[10pt] space-y-1">
               {(resumeData.skills || []).map((skill, idx) => (
@@ -709,7 +746,8 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* PROJECTS */}
-          <div className="mb-5">
+          {/* PROJECTS */}
+          <div className="mb-5 print:mb-3 break-inside-avoid">
             <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">PROJECTS:</div>
             <div className="space-y-4">
               {resumeData.projects?.map((proj, i) => (
@@ -729,7 +767,8 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* CERTIFICATIONS */}
-          <div className="mb-5">
+          {/* CERTIFICATIONS */}
+          <div className="mb-5 print:mb-3 break-inside-avoid">
             <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">CERTIFICATIONS:</div>
             <ul className="list-disc ml-5 space-y-1">
               {resumeData.certifications?.map((cert, idx) => (
@@ -739,8 +778,9 @@ export default function ResumeBuilderPage() {
           </div>
 
           {/* CUSTOM SECTIONS */}
+          {/* CUSTOM SECTIONS */}
           {resumeData.customSections?.map((sec) => (
-            <div className="mb-5" key={sec.id}>
+            <div className="mb-5 print:mb-3 break-inside-avoid" key={sec.id}>
               <div className="font-bold text-[11pt] uppercase border-b-2 border-black mb-2">{sec.title}:</div>
               <ul className="list-disc ml-5 space-y-1">
                 {(sec.items || []).map((item, idx) => (
@@ -757,7 +797,10 @@ export default function ResumeBuilderPage() {
           @media print {
               .no-print { display: none !important; }
               body { background: white; margin: 0; padding: 0; }
-              @page { margin: 0; size: A4; }
+              @page { size: auto; margin: 0mm; }
+              html, body { overflow: visible !important; height: auto !important; }
+              /* Hide scrollbars in print */
+              ::-webkit-scrollbar { display: none; }
           }
       `}</style>
     </div>

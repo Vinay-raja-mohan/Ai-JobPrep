@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🚀 AI JobPrep
 
-First, run the development server:
+<div align="center">
+  <h3>Current Status: 🟢 Project Live & Active</h3>
+  <br />
+  <img src="https://img.shields.io/badge/Status-Maintained-green?style=for-the-badge&logo=github" alt="Maintenance Status" />
+  <img src="https://img.shields.io/badge/Next.js-16.1-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb" alt="MongoDB" />
+  <br />
+  <br />
+  <p>
+    <b>Dominate your placement season with AI-powered roadmaps, personalized mentorship, and smart resume building.</b>
+  </p>
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌟 Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**AI JobPrep** is not just another study tool; it's your personal career accelerator. We leverage the power of **Google Gemini 1.5 Flash** and **OpenAI** to create a hyper-personalized learning experience. Whether you're targeting a specialized SDE role or preparing for general aptitude tests, AI JobPrep adapts to *you*.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Why AI JobPrep?
+*   **🧠 Intelligent Guidance:** Forget generic advice. Our AI analyzes your goal and timeline to build a custom roadmap.
+*   **⚡ Real-time Feedback:** Get instant coding reviews and resume optimization tips.
+*   **🎮 Gamified Learning:** Turn preparation into a game with streaks, XP, and badges.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🎯 AI-Generated Roadmaps
+Stop guessing what to study. Enter your target role (e.g., "Full Stack Developer") and timeline (e.g., "3 Months"), and watch our AI craft a **week-by-week, day-by-day plan** covering:
+*   **DSA (Data Structures & Algorithms)**
+*   **Aptitude & Logical Reasoning**
+*   **Core CS Subjects (OS, DBMS, CN)**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📝 Smart Resume Builder
+Build a resume that beats the ATS (Applicant Tracking System).
+*   **AI Objective Writer:** Rewrites your career objective to align perfectly with a specific Job Description.
+*   **Auto-Save:** Never lose your progress.
+*   **Professional Templates:** Clean, ATS-friendly PDF export.
 
-## Deploy on Vercel
+### 🤖 AI Mentor Chat
+Stuck on a concept? Feeling demotivated? Chat with our **AI Mentor**.
+*   **Restricted Domain:** Strictly professional. It won't discuss movies or politics—only career advice, technical concepts, and motivation.
+*   **Context Aware:** Knows your current roadmap progress and streak.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### ✅ Daily Missions & Gamification
+*   **Daily Tasks:** Bite-sized goals generated every day based on your roadmap.
+*   **Streak System:** Keep your momentum going.
+*   **Leaderboard:** Compete with peers for the top spot.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠️ Technology Stack
+
+We use the latest and greatest tech to ensure speed, scalability, and developer experience.
+
+| Category | Tech Stack |
+| :--- | :--- |
+| **Frontend** | Next.js 16 (App Router), React 19, Tailwind CSS 4, Shadcn/UI |
+| **Backend** | Next.js API Routes (Serverless), Node.js |
+| **Database** | MongoDB Atlas (with Mongoose ODM) |
+| **AI Engine** | Google Gemini 1.5 Flash, OpenAI API |
+| **Auth** | Custom Auth (Bcrypt + JWT/Session) |
+| **Validation** | Zod + React Hook Form |
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up the project locally.
+
+### Prerequisites
+*   Node.js 18+
+*   MongoDB Atlas URI
+*   Google Gemini API Key
+
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/Vinay-raja-mohan/Ai-JobPrep.git
+    cd Ai-JobPrep
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
+
+3.  **Configure Environment**
+    Create a `.env.local` file in the root directory:
+    ```env
+    MONGODB_URI=your_mongodb_connection_string
+    GEMINI_API_KEY=your_google_gemini_key
+    NEXT_PUBLIC_APP_URL=http://localhost:3000
+    ```
+
+4.  **Run the Server**
+    ```bash
+    npm run dev
+    ```
+
+5.  **Launch**
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🤝 Contributing
+
+We love open source! Here's how you can help:
+
+1.  **Fork** the repo on GitHub.
+2.  **Clone** your fork locally.
+3.  **Create a Branch** (`git checkout -b feature/AmazingFeature`).
+4.  **Commit** your changes (`git commit -m 'Add AmazingFeature'`).
+5.  **Push** to the branch (`git push origin feature/AmazingFeature`).
+6.  Open a **Pull Request**.
+
+---
+
+## 👤 Maintainer
+
+**Vinay Raja Mohan**
+*   [GitHub Profile](https://github.com/Vinay-raja-mohan)
+*   [LinkedIn](https://linkedin.com/in/vinay-raja-mohan)
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by the AI JobPrep Team. Licensed under MIT.</sub>
+</div>

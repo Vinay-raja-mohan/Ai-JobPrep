@@ -196,31 +196,6 @@ Monitor your preparation journey with detailed analytics:
   - Google Generative AI
   - OpenAI
 
-## Installation and Setup
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/Vinay-raja-mohan/Ai-JobPrep.git
-   ```
-
-2. Navigate into the project directory:
-
-   ```bash
-   cd Ai-JobPrep
-   ```
-
-3. Install dependencies using npm:
-
-   ```bash
-   npm install
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
 
 ## Usage Examples
 

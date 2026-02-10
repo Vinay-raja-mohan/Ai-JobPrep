@@ -135,11 +135,6 @@ We love open source! Here's how you can help:
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ by the AI JobPrep Team. Licensed under MIT.</sub>
-</div>
-
-
 ## Maintainer Info
 
 **Vinay Raja Mohan**
@@ -151,3 +146,7 @@ We love open source! Here's how you can help:
 - [Next.js Documentation](https://nextjs.org/docs)
 - [npm Documentation](https://docs.npmjs.com/)
 - [AI Job Prep Wiki](./wiki)
+
+<div align="center">
+  <sub>Built with ❤️ by the AI JobPrep Team. Licensed under MIT.</sub>
+</div>

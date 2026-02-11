@@ -52,13 +52,17 @@ function PracticeContent() {
     else if (lang === "cpp") setCode("// Write your solution here\n#include <iostream>\nusing namespace std;\n\nvoid solve() {\n    \n}")
   }
 
-  async function fetchProblem() {
+  async function fetchProblem(force = false) {
     setLoading(true)
     setHint("")
     try {
+      const userStr = localStorage.getItem("user");
+      const user = userStr ? JSON.parse(userStr) : null;
+      const email = user?.email;
+
       const res = await fetch("/api/dsa/generate", {
         method: "POST",
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic, email, force }),
         headers: {
           "Content-Type": "application/json",
           "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
@@ -119,7 +123,7 @@ function PracticeContent() {
               <span className="text-xs font-bold bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded mb-2 inline-block uppercase tracking-wider">{problem?.difficulty}</span>
               <CardTitle className="text-xl text-white">{problem?.title}</CardTitle>
             </div>
-            <Button variant="outline" size="sm" onClick={fetchProblem} className="border-white/10 text-slate-300 hover:bg-white/5 hover:text-white">
+            <Button variant="outline" size="sm" onClick={() => fetchProblem(true)} className="border-white/10 text-slate-300 hover:bg-white/5 hover:text-white">
               <RefreshCcw className="w-4 h-4 mr-2" /> New Problem
             </Button>
           </div>

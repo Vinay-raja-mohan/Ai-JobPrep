@@ -53,9 +53,9 @@ export function ApiKeyDialog({ trigger, className, defaultOpen = false }: ApiKey
       <Dialog.Trigger asChild>
         <div className={className}>
           {trigger || (
-            <Button variant="outline" size="sm" className="bg-slate-800 border-slate-700 hover:bg-slate-700 hover:text-white transition-all w-full justify-start">
-              <Key className="w-4 h-4 mr-2 text-blue-400" />
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-bold">GEMINI KEY</span>
+            <Button variant="outline" size="sm" className="h-8 bg-slate-800 border-slate-700 hover:bg-slate-700 hover:text-white transition-all w-full justify-start px-2 py-0">
+              <Key className="w-3.5 h-3.5 mr-2 text-blue-400" />
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-bold text-xs">GEMINI KEY</span>
             </Button>
           )}
         </div>

@@ -27,7 +27,7 @@ export async function generateRoadmap(profile: UserProfile, apiKey?: string) {
     Focus: ${profile.coreSkill}. Time: ${profile.dailyStudyTime} min/day. Total Duration: ${profile.goalTimeline}.
     
     IMPORTANT: You must generate a roadmap for the ENTIRE duration (${profile.goalTimeline}). 
-    If 3 months, generate 3 months. If 6 months, generate 6 months.
+    If 3 months, generate 3 months. If 6 months, generate 6 months. Check the line IMPORTANT and generate the roadmap for the given duration.
 
     STRICT SYLLABUS (Select topics from here):
     

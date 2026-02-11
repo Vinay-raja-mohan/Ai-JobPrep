@@ -102,7 +102,10 @@ export async function GET(req: Request) {
         name: user.name,
         badges: user.badges, // Return badges
         image: user.image,
-        totalStudyTime: user.totalStudyTime
+        totalStudyTime: user.totalStudyTime,
+        goalTimeline: user.goalTimeline,
+        targetRole: user.targetRole,
+        coreSkill: user.coreSkill
       },
       roadmapId: (roadmap as any)?._id,
       currentTask,

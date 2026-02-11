@@ -58,7 +58,7 @@ export default function AptitudePage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {cat.topics.map((topic) => (
-                <Link href={`/aptitude/practice?topic=${encodeURIComponent(topic.name)}`} key={topic.name}>
+                <Link href={`/learn/${encodeURIComponent(topic.name)}`} key={topic.name}>
                   <Card className="bg-[#1E293B]/40 border-white/5 hover:border-blue-500/50 hover:bg-[#1E293B]/80 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all duration-300 cursor-pointer h-full group">
                     <CardHeader className="p-5 flex flex-row items-center gap-4 space-y-0">
                       <div className={`w-10 h-10 shrink-0 rounded-lg ${topic.bg} flex items-center justify-center transition-transform group-hover:scale-110`}>

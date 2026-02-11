@@ -6,6 +6,14 @@ export interface IUser {
   email: string;
   password?: string; // Optional if using OAuth later, but mandatory for Credentials
   image?: string;
+  dob?: Date;
+  gender?: string;
+  phone?: string;
+  university?: string;
+  graduationYear?: string;
+  bio?: string;
+  linkedin?: string;
+  github?: string;
 
   // Profile Data
   targetRole?: string;
@@ -40,6 +48,14 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   password: { type: String, select: false },
   image: { type: String },
+  dob: { type: Date },
+  gender: { type: String },
+  phone: { type: String },
+  university: { type: String },
+  graduationYear: { type: String },
+  bio: { type: String },
+  linkedin: { type: String },
+  github: { type: String },
 
   targetRole: { type: String },
   coreSkill: { type: String },

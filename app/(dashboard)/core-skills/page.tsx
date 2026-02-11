@@ -184,9 +184,9 @@ export default function CoreSkillsPage() {
                     <Button
                       variant="outline"
                       className="border-slate-700 text-slate-300 hover:text-white hover:bg-white/5"
-                      onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(currentTask.coreTask.replace(":", " ") + " documentation")}`, "_blank")}
+                      onClick={() => router.push(`/learn/${encodeURIComponent(currentTask.coreTask.replace(":", " "))}?type=core`)}
                     >
-                      <BookOpen className="w-4 h-4 mr-2" /> Read Docs
+                      <BookOpen className="w-4 h-4 mr-2" /> Generate AI Guide
                     </Button>
                   </div>
                 </>

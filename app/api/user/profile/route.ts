@@ -16,32 +16,52 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // Force reset of progress stats
-    const resetData = {
-      ...updateData,
-      streak: 0,
-      shields: 0,
-      points: 0,
-      totalStudyTime: { aptitude: 0, dsa: 0, core: 0 },
-      lastActiveDate: new Date(), // Reset active date to now
-      lastStreakIncrement: null // Allow streak to start fresh today
-    };
+    // 1. Fetch current user to compare
+    const currentUser = await User.findOne({ email });
 
-    const user = await User.findOneAndUpdate(
-      { email },
-      { $set: resetData },
-      { new: true }
-    );
-
-    if (!user) {
+    if (!currentUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Delete existing roadmaps to trigger regeneration
-    await Roadmap.deleteMany({ userId: user._id as any });
+    // 2. Check if critical fields (goals) have changed
+    // If any of these change, we must reset progress/roadmap.
+    const isGoalChange =
+      (updateData.targetRole && updateData.targetRole !== currentUser.targetRole) ||
+      (updateData.coreSkill && updateData.coreSkill !== currentUser.coreSkill) ||
+      (updateData.goalTimeline && updateData.goalTimeline !== currentUser.goalTimeline) ||
+      (updateData.currentLevel && updateData.currentLevel !== currentUser.currentLevel);
+
+    let finalUpdate = { ...updateData };
+
+    if (isGoalChange) {
+      // Reset progress stats only on goal change
+      finalUpdate = {
+        ...finalUpdate,
+        streak: 0,
+        shields: 0,
+        points: 0,
+        totalStudyTime: { aptitude: 0, dsa: 0, core: 0 },
+        lastActiveDate: new Date(),
+        lastStreakIncrement: null
+      };
+
+      // Delete existing roadmaps
+      await Roadmap.deleteMany({ userId: currentUser._id as any });
+    }
+
+    // 3. Update User
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { $set: finalUpdate },
+      { new: true }
+    );
 
     return NextResponse.json(
-      { message: "Profile updated and progress reset successfully", user },
+      {
+        message: isGoalChange ? "Profile updated and progress reset" : "Profile updated",
+        user: updatedUser,
+        isGoalChange // Send this back so frontend knows whether to trigger regen
+      },
       { status: 200 }
     );
   } catch (error: any) {

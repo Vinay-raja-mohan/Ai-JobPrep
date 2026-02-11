@@ -1,11 +1,34 @@
-
 import { NextResponse } from "next/server";
 import { getGeminiModel } from "@/lib/gemini";
+import dbConnect from "@/lib/db";
+import { User } from "@/models/User";
+import { DSAProblem } from "@/models/DSAProblem";
 
 export async function POST(req: Request) {
   try {
-    const { topic } = await req.json();
+    const { topic, email, force } = await req.json();
 
+    if (!topic) {
+      return NextResponse.json({ error: "Topic is required" }, { status: 400 });
+    }
+
+    await dbConnect();
+
+    // 1. Find User (if email provided)
+    let user = null;
+    if (email) {
+      user = await User.findOne({ email });
+    }
+
+    // 2. Check for existing problem (if user exists and not forcing new)
+    if (user && !force) {
+      const existingProblem = await DSAProblem.findOne({ userId: user._id, topic });
+      if (existingProblem) {
+        return NextResponse.json(existingProblem.problem);
+      }
+    }
+
+    // 3. Generate New Problem
     const prompt = `
     Generate a unique Coding Interview Problem about "${topic}".
     Difficulty: Medium.
@@ -30,8 +53,23 @@ export async function POST(req: Request) {
     const response = await result.response;
     const text = response.text();
     const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const problemData = JSON.parse(jsonStr);
 
-    return NextResponse.json(JSON.parse(jsonStr));
+    // 4. Save to DB (if user exists)
+    if (user) {
+      await DSAProblem.findOneAndUpdate(
+        { userId: user._id, topic },
+        {
+          userId: user._id,
+          topic,
+          problem: problemData,
+          createdAt: new Date()
+        },
+        { upsert: true, new: true }
+      );
+    }
+
+    return NextResponse.json(problemData);
 
   } catch (error) {
     console.error("DSA Gen Error:", error);

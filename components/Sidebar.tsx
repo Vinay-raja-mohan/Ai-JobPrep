@@ -9,8 +9,9 @@ import {
   GraduationCap,
   Map,
   Bot,
-  Shield,
+
   Settings,
+  Sliders,
   FileText,
   LogOut,
   Trash2
@@ -22,7 +23,7 @@ const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/roadmap", label: "My Roadmap", icon: Map },
   { href: "/aptitude", label: "Aptitude", icon: BookOpen },
-  { href: "/dsa/practice", label: "DSA", icon: Code2 },
+  { href: "/dsa", label: "DSA", icon: Code2 },
   { href: "/core-skills", label: "Core Skills", icon: GraduationCap },
   { href: "/resume", label: "Resume Builder", icon: FileText },
   { href: "/mentor", label: "AI Mentor", icon: Bot },
@@ -65,59 +66,24 @@ export function Sidebar() {
       </nav>
 
       {/* Footer / Shield */}
-      <div className="p-4 mt-auto">
-        <div className="bg-[#1E293B]/50 rounded-xl p-4 border border-[#334155] backdrop-blur-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-yellow-500/10 rounded-lg">
-              <Shield className="w-5 h-5 text-yellow-500" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-white">Streak Shield</div>
-              <div className="text-xs text-slate-400">1 Left</div>
-            </div>
-          </div>
+      <div className="p-3 mt-auto">
+        <div className="bg-[#1E293B]/50 rounded-xl p-3 border border-[#334155] backdrop-blur-sm space-y-1">
+
+          <Link
+            href="/profile"
+            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-1 py-1 transition-colors group"
+          >
+            <Settings className="w-3.5 h-3.5 group-hover:text-blue-400" /> Settings
+          </Link>
           <Link
             href="/settings"
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white mt-4 px-1 transition-colors"
+            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-1 py-1 transition-colors group"
           >
-            <Settings className="w-4 h-4" /> Preferences
+            <Sliders className="w-3.5 h-3.5 group-hover:text-blue-400" /> Preferences
           </Link>
-          <button
-            onClick={() => {
-              localStorage.removeItem("user")
-              localStorage.removeItem("roadmap")
-              document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-              window.location.href = "/login"
-            }}
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white mt-2 px-1 transition-colors w-full text-left"
-          >
-            <LogOut className="w-4 h-4" /> Logout
-          </button>
 
-          <button
-            onClick={async () => {
-              if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-                const stored = localStorage.getItem("user");
-                if (stored) {
-                  const user = JSON.parse(stored);
-                  try {
-                    await fetch(`/api/user/delete?email=${user.email}`, { method: 'DELETE' });
-                  } catch (e) {
-                    console.error("Delete failed", e);
-                  }
-                }
 
-                localStorage.clear();
-                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-                window.location.href = "/";
-              }
-            }}
-            className="flex items-center gap-2 text-sm text-red-500/70 hover:text-red-500 mt-2 px-1 transition-colors w-full text-left"
-          >
-            <Trash2 className="w-4 h-4" /> Delete Account
-          </button>
-
-          <ApiKeyDialog className="flex items-center gap-2 text-sm text-slate-400 hover:text-white mt-2 px-1 transition-colors cursor-pointer group" />
+          <ApiKeyDialog className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-1 py-1 transition-colors cursor-pointer group" />
         </div>
       </div>
     </aside>

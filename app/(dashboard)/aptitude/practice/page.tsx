@@ -24,10 +24,29 @@ function PracticeContent() {
   const [score, setScore] = useState(0)
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false) // For creating questions
+  const [timeLeft, setTimeLeft] = useState(0) // Timer in seconds
 
   useEffect(() => {
     generateQuiz()
   }, [topic])
+
+  // Timer Countdown Logic
+  useEffect(() => {
+    if (loading || submitted || timeLeft <= 0) return
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          handleSubmit()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [loading, submitted, timeLeft])
 
   async function generateQuiz() {
     setLoading(true)
@@ -47,6 +66,9 @@ function PracticeContent() {
 
       const data = await res.json()
       setQuestions(data.questions)
+      // Set timer: 1 minute per question, minimum 5 minutes
+      const duration = Math.max(300, data.questions.length * 60)
+      setTimeLeft(duration)
     } catch (error) {
       console.error(error)
       toast.error("Failed to load questions")
@@ -61,6 +83,8 @@ function PracticeContent() {
   }
 
   async function handleSubmit() {
+    if (submitted) return
+
     let correct = 0
     questions.forEach((q, idx) => {
       if (answers[idx] === q.correctAnswer) correct++
@@ -71,10 +95,16 @@ function PracticeContent() {
     setSubmitted(true)
 
     if (percentage >= 70) {
-      toast.success(`You passed with ${percentage}%!`)
+      toast.success(`You passed with ${percentage.toFixed(0)}%!`)
     } else {
-      toast.error(`You scored ${percentage}%. You need 70% to pass.`)
+      toast.error(`You scored ${percentage.toFixed(0)}%. You need 70% to pass.`)
     }
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
   if (loading) return (
@@ -87,6 +117,9 @@ function PracticeContent() {
   if (submitted) {
     const passed = score >= 70
     const correctCount = questions.filter((_, i) => answers[i] === questions[i].correctAnswer).length
+    const attemptedCount = Object.keys(answers).length
+    const unattemptedCount = questions.length - attemptedCount
+    const wrongCount = attemptedCount - correctCount
 
     return (
       <div className="p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-700">
@@ -152,14 +185,18 @@ function PracticeContent() {
           </div>
 
           {/* Quick Stats Footer */}
-          <div className="grid grid-cols-3 border-t border-white/10 bg-white/5 divide-x divide-white/10">
+          <div className="grid grid-cols-4 border-t border-white/10 bg-white/5 divide-x divide-white/10">
             <div className="p-6 text-center hover:bg-white/5 transition-colors">
               <div className="text-3xl font-bold text-green-400 mb-1">{correctCount}</div>
               <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Correct</div>
             </div>
             <div className="p-6 text-center hover:bg-white/5 transition-colors">
-              <div className="text-3xl font-bold text-red-400 mb-1">{questions.length - correctCount}</div>
-              <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Mistakes</div>
+              <div className="text-3xl font-bold text-red-400 mb-1">{wrongCount}</div>
+              <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Wrong</div>
+            </div>
+            <div className="p-6 text-center hover:bg-white/5 transition-colors">
+              <div className="text-3xl font-bold text-yellow-400 mb-1">{unattemptedCount}</div>
+              <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Skipped</div>
             </div>
             <div className="p-6 text-center hover:bg-white/5 transition-colors">
               <div className="text-3xl font-bold text-blue-400 mb-1">{questions.length}</div>
@@ -279,9 +316,11 @@ function PracticeContent() {
           <p className="text-sm text-slate-400">Question {currentQ + 1} of {questions.length}</p>
         </div>
         <div className="text-right">
-          <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-mono font-medium">
-            {/* Timer placeholder */}
-            00:00
+          <div className={`px-3 py-1 rounded-full border text-sm font-mono font-medium transition-colors ${timeLeft < 60
+            ? "bg-red-500/10 border-red-500/20 text-red-400 animate-pulse"
+            : "bg-blue-500/10 border-blue-500/20 text-blue-400"
+            }`}>
+            {formatTime(timeLeft)}
           </div>
         </div>
       </div>

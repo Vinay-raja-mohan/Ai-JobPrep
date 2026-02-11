@@ -15,6 +15,7 @@ export default function ResumeBuilderPage() {
   const [activeTab, setActiveTab] = useState("optimize")
   const [jobDescription, setJobDescription] = useState("")
   const [isOptimizing, setIsOptimizing] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const [resumeData, setResumeData] = useState({
     fullName: "",
@@ -46,11 +47,14 @@ export default function ResumeBuilderPage() {
         console.error("Failed to load resume data", e);
       }
     }
+    setIsLoaded(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("resumeData", JSON.stringify(resumeData));
-  }, [resumeData]);
+    if (isLoaded) {
+      localStorage.setItem("resumeData", JSON.stringify(resumeData));
+    }
+  }, [resumeData, isLoaded]);
 
   const handleReset = () => {
     if (confirm("Are you sure? This will clear all your data.")) {

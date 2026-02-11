@@ -10,7 +10,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Slider } from "@/components/ui/slider"
 import { toast } from "sonner"
 import { Save, Loader2 } from "lucide-react"
+import { LayoutDashboard, Settings } from "lucide-react"
 import { ApiKeyDialog } from "@/components/ApiKeyDialog"
+import { Input } from "@/components/ui/input"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -67,23 +69,28 @@ export default function SettingsPage() {
       localStorage.setItem("user", JSON.stringify(updatedUser))
       setUser(updatedUser)
 
-      // Trigger Roadmap Generation
-      const apiKey = localStorage.getItem("gemini_api_key");
-      const headers: any = { "Content-Type": "application/json" };
-      if (apiKey) headers["x-gemini-api-key"] = apiKey;
+      if (data.isGoalChange) {
+        // Trigger Roadmap Generation only if goals changed
+        const apiKey = localStorage.getItem("gemini_api_key");
+        const headers: any = { "Content-Type": "application/json" };
+        if (apiKey) headers["x-gemini-api-key"] = apiKey;
 
-      const genRes = await fetch("/api/roadmap/generate", {
-        method: "POST",
-        body: JSON.stringify({ email: user.email }),
-        headers: headers,
-      })
+        const genRes = await fetch("/api/roadmap/generate", {
+          method: "POST",
+          body: JSON.stringify({ email: user.email }),
+          headers: headers,
+        })
 
-      if (!genRes.ok) {
-        console.error("Roadmap generation failed")
+        if (!genRes.ok) {
+          console.error("Roadmap generation failed")
+          toast.error("Profile updated, but roadmap failed to regenerate.")
+        } else {
+          toast.success("Roadmap updated! 🚀")
+          router.push("/dashboard")
+        }
+      } else {
+        toast.success("Profile updated successfully! ✅")
       }
-
-      toast.success("Roadmap updated! 🚀")
-      router.push("/dashboard") // Redirect to dashboard to see new roadmap
     } catch (error) {
       console.error(error)
       toast.error("Failed to save changes")
@@ -97,11 +104,17 @@ export default function SettingsPage() {
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-8 text-slate-100">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Setting Up Your AI Mentor</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
+          <Settings className="w-8 h-8 text-blue-500" />
+          Learning Preferences
+          Preferences
+        </h1>
         <p className="text-slate-400">Tell us about your goals so we can generate the perfect roadmap for you.</p>
       </div>
 
       <div className="space-y-8">
+
+
 
         {/* Target Role */}
         <div className="space-y-3">

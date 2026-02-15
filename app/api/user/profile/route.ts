@@ -35,14 +35,15 @@ export async function PATCH(req: Request) {
 
     if (isGoalChange) {
       // Reset progress stats only on goal change
+      // IMPORTANT: We do NOT reset streak/shields/points anymore to be friendlier.
       finalUpdate = {
         ...finalUpdate,
-        streak: 0,
-        shields: 0,
-        points: 0,
-        totalStudyTime: { aptitude: 0, dsa: 0, core: 0 },
-        lastActiveDate: new Date(),
-        lastStreakIncrement: null
+        // streak: 0, // Keep streak
+        // shields: 0, // Keep shields
+        // points: 0, // Keep points
+        // totalStudyTime: { ... }, // Keep lifetime stats
+        // lastActiveDate: new Date(), // Keep last active
+        // lastStreakIncrement: null // Keep last increment
       };
 
       // Delete existing roadmaps

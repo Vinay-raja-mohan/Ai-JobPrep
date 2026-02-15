@@ -48,12 +48,36 @@ export async function POST(req: Request) {
         const today = new Date();
         const lastInc = user.lastStreakIncrement ? new Date(user.lastStreakIncrement) : null;
 
-        const isSameDay = lastInc &&
-          lastInc.getDate() === today.getDate() &&
-          lastInc.getMonth() === today.getMonth() &&
-          lastInc.getFullYear() === today.getFullYear();
+        // Set times to midnight for accurate calendar day comparison
+        const todayMidnight = new Date(today);
+        todayMidnight.setHours(0, 0, 0, 0);
 
-        if (!isSameDay) {
+        let lastMidnight = null;
+        if (lastInc) {
+          lastMidnight = new Date(lastInc);
+          lastMidnight.setHours(0, 0, 0, 0);
+        }
+
+        const oneDayMs = 24 * 60 * 60 * 1000;
+        let diffDays = 0;
+
+        if (lastMidnight) {
+          diffDays = Math.round((todayMidnight.getTime() - lastMidnight.getTime()) / oneDayMs);
+        }
+
+        // Logic:
+        // 1. If diffDays == 0: Already incremented today. Do nothing.
+        // 2. If diffDays == 1: Consecutive day. Increment streak.
+        // 3. If diffDays > 1: Missed a day. Reset streak to 1.
+        // 4. If lastMidnight is null: First ever streak. Set to 1.
+
+        if (!lastMidnight || diffDays > 1) {
+          // Broken streak or fresh start
+          user.streak = 1;
+          user.lastStreakIncrement = today;
+          streakIncremented = true;
+        } else if (diffDays === 1) {
+          // Perfect streak continuation
           user.streak = (user.streak || 0) + 1;
           user.lastStreakIncrement = today;
           streakIncremented = true;
@@ -63,6 +87,7 @@ export async function POST(req: Request) {
             user.badges.push("streak_7");
           }
         }
+        // If diffDays === 0, we do nothing (streak already counted for today)
 
         // Badge: Early Bird (Finished before 9 AM)
         const currentHour = new Date().getHours();

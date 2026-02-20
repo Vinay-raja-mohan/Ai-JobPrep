@@ -198,7 +198,7 @@ export default function DashboardPage() {
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
                     }`}
-                    onClick={() => !isTaskDone(currentTask, "aptitude") && router.push(`/learn/${encodeURIComponent(currentTask.aptitudeTask.split(":")[0])}`)}>
+                    onClick={() => !isTaskDone(currentTask, "aptitude") && router.push(`/learn/${encodeURIComponent(currentTask.aptitudeTask.split(":")[0])}?type=aptitude`)}>
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg border ${isTaskDone(currentTask, "aptitude")
                         ? "bg-green-500/10 border-green-500/20 text-green-500"
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
                     }`}
-                    onClick={() => !isTaskDone(currentTask, "dsa") && router.push(`/learn/${encodeURIComponent(currentTask.dsaTask.split(":")[0])}`)}>
+                    onClick={() => !isTaskDone(currentTask, "dsa") && router.push(`/learn/${encodeURIComponent(currentTask.dsaTask.split(":")[0])}?type=dsa`)}>
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg border ${isTaskDone(currentTask, "dsa")
                         ? "bg-green-500/10 border-green-500/20 text-green-500"

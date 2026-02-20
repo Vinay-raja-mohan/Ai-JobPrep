@@ -86,6 +86,12 @@ export default function LearnTopicPage() {
   }
 
   const getQuizPath = () => {
+    if (typeof window !== 'undefined') {
+      const typeParam = new URLSearchParams(window.location.search).get('type');
+      if (typeParam === 'dsa') return `/dsa/practice?topic=${encodeURIComponent(topic)}`;
+      if (typeParam === 'aptitude') return `/aptitude/practice?topic=${encodeURIComponent(topic)}`;
+    }
+
     const lowerTopic = topic.toLowerCase();
     if (['dsa', 'array', 'linked list', 'tree', 'graph', 'dynamic programming'].some(k => lowerTopic.includes(k))) {
       return `/dsa/practice?topic=${encodeURIComponent(topic)}`

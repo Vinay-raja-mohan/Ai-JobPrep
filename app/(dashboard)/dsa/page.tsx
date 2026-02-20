@@ -80,7 +80,7 @@ export default function DSAPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {cat.topics.map((topic) => (
-                <Link href={`/learn/${encodeURIComponent(topic.name)}`} key={topic.name}>
+                <Link href={`/learn/${encodeURIComponent(topic.name)}?type=dsa`} key={topic.name}>
                   <Card className="bg-[#1E293B]/40 border-white/5 hover:border-blue-500/50 hover:bg-[#1E293B]/80 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 cursor-pointer h-full group">
                     <CardHeader className="p-5 flex flex-row items-center gap-4 space-y-0">
                       <div className={`w-12 h-12 shrink-0 rounded-xl ${topic.bg} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>

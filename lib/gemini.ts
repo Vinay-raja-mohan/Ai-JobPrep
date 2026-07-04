@@ -32,6 +32,7 @@ export async function generateContentWithRetry(prompt: string, apiKey?: string, 
 
 
 export interface UserProfile {
+  educationStage?: string;
   targetRole: string;
   coreSkill: string;
   currentLevel: string;
@@ -42,13 +43,29 @@ export interface UserProfile {
 export async function generateRoadmap(profile: UserProfile, apiKey?: string) {
   // We limit to 1 month for now to avoid token limits, or we use 1.5-flash which handles more.
   // Let's ask for the full timeline but keep descriptions concise.
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
+  const isTechRole = !profile.targetRole || techKeywords.some(kw => profile.targetRole.toLowerCase().includes(kw));
+  const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(profile.educationStage || "");
+  const skipTechPrep = isSchoolLevel || !isTechRole;
+
   const prompt = `
     Create a complete study roadmap for a "${profile.targetRole}" (Level: ${profile.currentLevel}).
     Focus: ${profile.coreSkill}. Time: ${profile.dailyStudyTime} min/day. Total Duration: ${profile.goalTimeline}.
+    Education Stage: ${profile.educationStage || "B.Tech/Degree"}
     
     IMPORTANT: You must generate a roadmap for the ENTIRE duration (${profile.goalTimeline}). 
     If 3 months, generate 3 months. If 6 months, generate 6 months. Check the line IMPORTANT and generate the roadmap for the given duration.
 
+    ${skipTechPrep ? `
+    STRICT SYLLABUS:
+    Since this user is in school or pursuing a non-IT role (${profile.targetRole}), DO NOT include DSA (Data Structures & Algorithms) or corporate IT Aptitude.
+    Focus strictly on their foundational learning for "${profile.targetRole}" and core subjects:
+    1. CORE SKILL: Specific to "${profile.coreSkill}".
+    2. FOUNDATION: Relevant domain knowledge, case studies, or general skills for their path.
+    
+    Set "aptitudeTask" to "None - Focus on core task."
+    Set "dsaTask" to "None - Focus on core task."
+    ` : `
     STRICT SYLLABUS (Select topics from here):
     
     1. APTITUDE (Arithmetic & Reasoning):
@@ -60,11 +77,18 @@ export async function generateRoadmap(profile: UserProfile, apiKey?: string) {
 
     3. CORE SKILL:
        - Specific to "${profile.coreSkill}" (e.g. if Python -> Syntax, OOPs, Django, etc).
+    `}
 
     Ensure:
+    ${skipTechPrep ? `
+    - "aptitudeTask": Must literally be "None - Focus on core task."
+    - "dsaTask": Must literally be "None - Focus on core task."
+    - "coreTask": Specific to ${profile.coreSkill}.
+    ` : `
     - "aptitudeTask": Must be from the APTITUDE list above. (NOT Code).
     - "dsaTask": Must be from the DSA list above.
     - "coreTask": Specific to ${profile.coreSkill}.
+    `}
     
     Output JSON with this structure:
     {

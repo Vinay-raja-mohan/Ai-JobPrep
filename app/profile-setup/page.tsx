@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { ApiKeyDialog } from "@/components/ApiKeyDialog"
 
 const formSchema = z.object({
+  educationStage: z.enum(["9th", "10th", "Intermediate", "B.Tech"]),
   targetRole: z.string().min(1, "Please enter a target role."),
   coreSkill: z.string().min(1, "Please enter a core skill."),
   currentLevel: z.enum(["Beginner", "Intermediate", "Advanced"]),
@@ -44,6 +45,7 @@ function ProfileSetupForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      educationStage: "B.Tech",
       targetRole: "",
       coreSkill: "",
       dailyStudyTime: 60,
@@ -54,8 +56,10 @@ function ProfileSetupForm() {
     // Hydrate AI suggestions if available
     const role = localStorage.getItem("discoveredRole")
     const skill = localStorage.getItem("discoveredSkill")
+    const stage = localStorage.getItem("discoveredStage")
     if (role) form.setValue("targetRole", role)
     if (skill) form.setValue("coreSkill", skill)
+    if (stage) form.setValue("educationStage", stage as any)
   }, [form])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -125,6 +129,30 @@ function ProfileSetupForm() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+              <FormField
+                control={form.control}
+                name="educationStage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-300">Education Stage</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-[#0F172A] border-slate-700 text-white">
+                          <SelectValue placeholder="Select your education stage" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-[#1E293B] border-slate-700 text-white">
+                        <SelectItem value="9th">9th Class</SelectItem>
+                        <SelectItem value="10th">10th Class</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate (11th/12th)</SelectItem>
+                        <SelectItem value="B.Tech">B.Tech / Degree</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

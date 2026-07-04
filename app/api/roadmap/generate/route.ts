@@ -27,6 +27,7 @@ export async function POST(req: Request) {
 
     // Generate Roadmap via AI
     const profile = {
+      educationStage: user.educationStage,
       targetRole: user.targetRole || "Software Developer",
       coreSkill: user.coreSkill || "General Programming",
       currentLevel: user.currentLevel || "Beginner",

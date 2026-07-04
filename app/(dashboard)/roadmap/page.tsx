@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 
 export default function RoadmapPage() {
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
   const [roadmap, setRoadmap] = useState<any>(null)
   const [progress, setProgress] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -16,8 +17,9 @@ export default function RoadmapPage() {
   useEffect(() => {
     const stored = localStorage.getItem("user")
     if (stored) {
-      const user = JSON.parse(stored)
-      fetchRoadmap(user.email)
+      const parsedUser = JSON.parse(stored)
+      setUser(parsedUser)
+      fetchRoadmap(parsedUser.email)
     } else {
       router.push("/login")
     }
@@ -39,6 +41,11 @@ export default function RoadmapPage() {
       setLoading(false)
     }
   }
+
+  const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
+  const isTechRole = !user?.targetRole || techKeywords.some(kw => user?.targetRole?.toLowerCase().includes(kw));
+  const showTechFeatures = !isSchoolLevel && isTechRole;
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-[80vh] space-y-4 text-white">
@@ -163,19 +170,23 @@ export default function RoadmapPage() {
                             </h4>
 
                             {/* Task Cards Grid */}
-                            <div className="grid md:grid-cols-3 gap-4">
-                              <StudyCard
-                                icon={<Brain className="w-5 h-5 text-orange-400" />}
-                                title="Aptitude"
-                                content={day.aptitudeTask}
-                                color="bg-orange-500/5 hover:bg-orange-500/10 border-orange-500/20 text-orange-200"
-                              />
-                              <StudyCard
-                                icon={<Code className="w-5 h-5 text-purple-400" />}
-                                title="DSA"
-                                content={day.dsaTask}
-                                color="bg-purple-500/5 hover:bg-purple-500/10 border-purple-500/20 text-purple-200"
-                              />
+                            <div className={`grid gap-4 ${showTechFeatures ? 'md:grid-cols-3' : 'md:grid-cols-1'}`}>
+                              {showTechFeatures && (
+                                <>
+                                  <StudyCard
+                                    icon={<Brain className="w-5 h-5 text-orange-400" />}
+                                    title="Aptitude"
+                                    content={day.aptitudeTask}
+                                    color="bg-orange-500/5 hover:bg-orange-500/10 border-orange-500/20 text-orange-200"
+                                  />
+                                  <StudyCard
+                                    icon={<Code className="w-5 h-5 text-purple-400" />}
+                                    title="DSA"
+                                    content={day.dsaTask}
+                                    color="bg-purple-500/5 hover:bg-purple-500/10 border-purple-500/20 text-purple-200"
+                                  />
+                                </>
+                              )}
                               <StudyCard
                                 icon={<Cpu className="w-5 h-5 text-emerald-400" />}
                                 title="Core"

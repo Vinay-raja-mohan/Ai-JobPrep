@@ -26,10 +26,18 @@ export default function DiscoverPathPage() {
   const [interests, setInterests] = useState("")
   const [workStyle, setWorkStyle] = useState("")
   const [telegramId, setTelegramId] = useState("")
+  const [educationStage, setEducationStage] = useState("")
   const [suggestions, setSuggestions] = useState<CareerSuggestion[]>([])
 
-  const suggestedSkills = ["Python", "JavaScript", "React", "Java", "Data Analysis", "UI/UX Design", "Public Speaking", "Problem Solving", "C++", "SQL"]
-  const suggestedInterests = ["Building visual things", "Working with data", "Leading teams", "Solving puzzles", "Writing content", "System architecture", "Interacting with users"]
+  const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(educationStage);
+
+  const suggestedSkills = isSchoolLevel 
+    ? ["Math", "Physics", "Chemistry", "Biology", "History", "Computer Science", "Arts", "Economics"]
+    : ["Python", "JavaScript", "React", "Java", "Data Analysis", "UI/UX Design", "Public Speaking", "Problem Solving", "C++", "SQL"]
+  
+  const suggestedInterests = isSchoolLevel
+    ? ["Space & Astronomy", "Building robots", "Drawing & Sketching", "Writing stories", "Business ideas", "Solving puzzles"]
+    : ["Building visual things", "Working with data", "Leading teams", "Solving puzzles", "Writing content", "System architecture", "Interacting with users"]
 
   const addSkill = (skill: string) => {
     setSkills(prev => prev ? `${prev}, ${skill}` : skill)
@@ -54,7 +62,7 @@ export default function DiscoverPathPage() {
 
       const res = await fetch("/api/discover", {
         method: "POST",
-        body: JSON.stringify({ skills, interests, workStyle }),
+        body: JSON.stringify({ skills, interests, workStyle, educationStage }),
         headers,
       })
 
@@ -94,6 +102,7 @@ export default function DiscoverPathPage() {
           email: userEmail,
           targetRole: suggestion.jobTitle,
           coreSkill: suggestion.coreSkill,
+          educationStage,
           currentLevel: "Beginner",
           dailyStudyTime: 60,
           goalTimeline: "3 months",
@@ -105,6 +114,9 @@ export default function DiscoverPathPage() {
       if (!res.ok) throw new Error("Failed to update profile")
       const profileData = await res.json()
       localStorage.setItem("user", JSON.stringify(profileData.user))
+      localStorage.setItem("discoveredRole", suggestion.jobTitle)
+      localStorage.setItem("discoveredSkill", suggestion.coreSkill)
+      localStorage.setItem("discoveredStage", educationStage)
 
       // 2. Generate Roadmap
       const apiKey = localStorage.getItem("gemini_api_key");
@@ -118,6 +130,26 @@ export default function DiscoverPathPage() {
       })
 
       if (!genRes.ok) throw new Error("Failed to generate roadmap")
+
+      // 3. Generate Career Path Cache
+      toast.loading("Generating your high-level Career Path... 🧭", { id: loadingToastId })
+      try {
+        const cpRes = await fetch("/api/career-path/generate", {
+          method: "POST",
+          body: JSON.stringify({ 
+            educationStage, 
+            targetRole: suggestion.jobTitle, 
+            coreSkill: suggestion.coreSkill 
+          }),
+          headers: headers,
+        })
+        if (cpRes.ok) {
+          const cpData = await cpRes.json()
+          localStorage.setItem(`careerPath_${userEmail}`, JSON.stringify(cpData.path))
+        }
+      } catch (cpErr) {
+        console.warn("Failed to generate career path pre-cache:", cpErr)
+      }
       
       toast.dismiss(loadingToastId)
       toast.success("Roadmap generated successfully!")
@@ -156,10 +188,27 @@ export default function DiscoverPathPage() {
             <CardContent>
               <form onSubmit={handleDiscover} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="skills" className="text-slate-300">Your Skills (Tools, Languages, Soft Skills)</Label>
+                  <Label className="text-slate-300">Current Education Stage</Label>
+                  <Select onValueChange={setEducationStage} value={educationStage}>
+                    <SelectTrigger className="bg-[#0F172A] border-slate-700 text-white">
+                      <SelectValue placeholder="Select your education stage" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1E293B] border-slate-700 text-white">
+                      <SelectItem value="9th">9th Class</SelectItem>
+                      <SelectItem value="10th">10th Class</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate (11th/12th)</SelectItem>
+                      <SelectItem value="B.Tech">B.Tech / Degree (IT or Core)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="skills" className="text-slate-300">
+                    {isSchoolLevel ? "Your Favorite Subjects" : "Your Skills (Tools, Languages, Soft Skills)"}
+                  </Label>
                   <Input 
                     id="skills" 
-                    placeholder="e.g. Python, Communication, UI Design, Math" 
+                    placeholder={isSchoolLevel ? "e.g. Math, Science, History" : "e.g. Python, Communication, UI Design, Math"} 
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
                     className="bg-[#0F172A] border-slate-700 text-white"

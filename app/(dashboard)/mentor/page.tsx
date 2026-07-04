@@ -15,12 +15,29 @@ interface Message {
 }
 
 export default function MentorChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", content: "Hello! I'm your AI Mentor. Ask me anything about DSA, Aptitude, or Career guidance. 🚀" }
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user")
+    if (stored) {
+      const user = JSON.parse(stored)
+      const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
+      const isTechRole = !user?.targetRole || techKeywords.some(kw => user?.targetRole?.toLowerCase().includes(kw));
+      const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
+      const showTechFeatures = !isSchoolLevel && isTechRole;
+
+      setMessages([
+        { role: "bot", content: `Hello! I'm your AI Mentor. Ask me anything about ${showTechFeatures ? "DSA, Aptitude, or " : ""}Career guidance for ${user?.targetRole || "your goals"}. 🚀` }
+      ])
+    } else {
+      setMessages([
+        { role: "bot", content: "Hello! I'm your AI Mentor. Ask me anything about Career guidance. 🚀" }
+      ])
+    }
+  }, [])
 
   useEffect(() => {
     if (scrollRef.current) {

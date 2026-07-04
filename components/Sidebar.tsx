@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import {
   LayoutDashboard,
   BookOpen,
@@ -13,7 +14,8 @@ import {
   FileText,
   UserCheck,
   LogOut,
-  Trash2
+  Trash2,
+  Milestone
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ApiKeyDialog } from "@/components/ApiKeyDialog"
@@ -21,6 +23,7 @@ import { ApiKeyDialog } from "@/components/ApiKeyDialog"
 const sidebarLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/roadmap", label: "My Roadmap", icon: Map },
+  { href: "/career-path", label: "Career Path", icon: Milestone },
   { href: "/aptitude", label: "Aptitude", icon: BookOpen },
   { href: "/dsa", label: "DSA", icon: Code2 },
   { href: "/core-skills", label: "Core Skills", icon: GraduationCap },
@@ -31,6 +34,19 @@ const sidebarLinks = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user")
+    if (stored) {
+      setUser(JSON.parse(stored))
+    }
+  }, [])
+
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
+  const isTechRole = !user?.targetRole || techKeywords.some(kw => user?.targetRole?.toLowerCase().includes(kw));
+  const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
+  const showTechFeatures = !isSchoolLevel && isTechRole;
 
   return (
     <aside className="w-64 bg-[#0B1120] border-r border-[#1E293B] flex flex-col hidden md:flex text-slate-300">
@@ -44,7 +60,9 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-4 space-y-2">
-        {sidebarLinks.map((link) => {
+        {sidebarLinks
+          .filter(link => showTechFeatures || (link.href !== "/aptitude" && link.href !== "/dsa"))
+          .map((link) => {
           const isActive = pathname.startsWith(link.href) && link.href !== "/dashboard" || pathname === link.href
 
           return (

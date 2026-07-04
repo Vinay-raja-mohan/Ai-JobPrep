@@ -17,6 +17,7 @@ export interface IUser {
   github?: string;
 
   // Profile Data
+  educationStage?: string;
   targetRole?: string;
   coreSkill?: string;
   currentLevel?: 'Beginner' | 'Intermediate' | 'Advanced';
@@ -59,6 +60,7 @@ const UserSchema = new Schema<IUser>({
   linkedin: { type: String },
   github: { type: String },
 
+  educationStage: { type: String },
   targetRole: { type: String },
   coreSkill: { type: String },
   currentLevel: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'] },

@@ -121,14 +121,17 @@ export default function CoreSkillsPage() {
   const isCompleted = currentTask?.resources?.includes("completed_core")
   // Fallback if user's exact string isn't in map, try to find partial match or default
   const userSkill = user?.coreSkill || "React / Next.js"
-  const resources = YOUTUBE_CHANNELS[userSkill] || YOUTUBE_CHANNELS["React / Next.js"]
+  const resources = YOUTUBE_CHANNELS[userSkill] || [
+    { name: "YouTube Search", url: `https://www.youtube.com/results?search_query=${encodeURIComponent(userSkill + " tutorials")}`, desc: `Find top tutorials for ${userSkill}.` },
+    { name: "Google Search", url: `https://www.google.com/search?q=${encodeURIComponent("Best resources to learn " + userSkill)}`, desc: `Web resources for ${userSkill}.` }
+  ];
 
   return (
     <div className="p-8 max-w-[1600px] mx-auto space-y-8 text-slate-100 animate-in fade-in duration-500">
 
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Core Engineering Skills</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Core Skills</h1>
           <p className="text-slate-400">Mastering {userSkill} one day at a time.</p>
         </div>
         <div className="hidden md:block">

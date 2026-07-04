@@ -32,9 +32,9 @@ export async function POST(req: Request) {
       taskDay.resources.push(flag);
     }
 
-    // 4. Check if ALL 3 are done
-    const isAptitudeDone = taskDay.resources.includes("completed_aptitude");
-    const isDsaDone = taskDay.resources.includes("completed_dsa");
+    // 4. Check if ALL valid tasks are done
+    const isAptitudeDone = taskDay.resources.includes("completed_aptitude") || taskDay.aptitudeTask?.includes("None") || !taskDay.aptitudeTask;
+    const isDsaDone = taskDay.resources.includes("completed_dsa") || taskDay.dsaTask?.includes("None") || !taskDay.dsaTask;
     const isCoreDone = taskDay.resources.includes("completed_core");
 
     let streakIncremented = false;
@@ -97,6 +97,23 @@ export async function POST(req: Request) {
 
         user.points = (user.points || 0) + 50; // Bonus for full day
         await user.save();
+
+        // Send Telegram Notification
+        if (user.telegramChatId && process.env.TELEGRAM_BOT_TOKEN) {
+          try {
+            const message = `🎉 Congratulations! You've completed all your tasks for today (Day ${day}) on AI Career Prep! Keep up the great work! 🚀`;
+            await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: user.telegramChatId,
+                text: message
+              })
+            });
+          } catch (err) {
+            console.error("Telegram notification failed:", err);
+          }
+        }
       }
     }
 

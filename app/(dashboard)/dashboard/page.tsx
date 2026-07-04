@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Zap, Shield, Brain, Code, Terminal, ChevronRight, MessageSquare, BarChart3, Percent, TrendingUp, Coins, Bot, CheckCircle, Clock, Binary, Users, Map, Hourglass, CircleDollarSign, Gauge, Hash, Compass } from "lucide-react"
+import { Zap, Shield, Brain, Code, Terminal, ChevronRight, MessageSquare, BarChart3, Percent, TrendingUp, Coins, Bot, CheckCircle, Clock, Binary, Users, Map, Hourglass, CircleDollarSign, Gauge, Hash, Compass, BookOpen } from "lucide-react"
 import { ProgressRing } from "@/components/ui/progress-ring"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -109,6 +109,11 @@ export default function DashboardPage() {
     if (!task || !task.resources) return false
     return task.resources.includes(`completed_${type}`)
   }
+
+  const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
+  const isTechRole = !user?.targetRole || techKeywords.some(kw => user?.targetRole?.toLowerCase().includes(kw));
+  const showTechFeatures = !isSchoolLevel && isTechRole;
 
   if (loading) return (
     <div className="flex h-screen items-center justify-center bg-[#020617] text-white">
@@ -290,7 +295,9 @@ export default function DashboardPage() {
                 <>
                   {/* Task Rows */}
 
-                  {/* Aptitude Task */}
+                  {showTechFeatures && (
+                    <>
+                      {/* Aptitude Task */}
                   <div className={`group/task flex items-center justify-between p-4 rounded-xl border border-white/5 transition-all ${isTaskDone(currentTask, "aptitude")
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
@@ -357,6 +364,8 @@ export default function DashboardPage() {
                       </div>
                     )}
                   </div>
+                  </>
+                  )}
 
                   {/* Core Task */}
                   <div className={`group/task flex items-center justify-between p-4 rounded-xl border border-white/5 transition-all ${isTaskDone(currentTask, "core")
@@ -397,6 +406,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* 3. Aptitude Practice Grid */}
+          {showTechFeatures && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold flex items-center gap-2">
@@ -430,6 +440,7 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
+          )}
 
           {/* 4. Achievements & Badges Section */}
           <div className="space-y-4">
@@ -439,12 +450,17 @@ export default function DashboardPage() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
+              {(showTechFeatures ? [
                 { id: "streak_7", title: "Week Warrior", desc: "7 Day Streak", icon: Zap, color: "text-orange-400", bg: "bg-orange-400/10", border: "border-orange-500/30" },
                 { id: "quiz_master", title: "Quiz Wizard", desc: "Scored 100% in Aptitude", icon: Brain, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-500/30" },
                 { id: "dsa_solver", title: "DSA Crusher", desc: "Solved 10 DSA Problems", icon: Code, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-500/30" },
                 { id: "early_bird", title: "Early Bird", desc: "Completed tasks before 9AM", icon: Clock, color: "text-yellow-400", bg: "bg-yellow-400/10", border: "border-yellow-500/30" },
-              ].map((badge, i) => {
+              ] : [
+                { id: "streak_7", title: "Week Warrior", desc: "7 Day Streak", icon: Zap, color: "text-orange-400", bg: "bg-orange-400/10", border: "border-orange-500/30" },
+                { id: "core_master", title: "Knowledge Seeker", desc: "Completed 5 Core Topics", icon: Brain, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-500/30" },
+                { id: "deep_diver", title: "Deep Diver", desc: "Spent 10 Hours Learning", icon: BookOpen, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-500/30" },
+                { id: "early_bird", title: "Early Bird", desc: "Completed tasks before 9AM", icon: Clock, color: "text-yellow-400", bg: "bg-yellow-400/10", border: "border-yellow-500/30" },
+              ]).map((badge, i) => {
                 const isUnlocked = user?.badges?.includes(badge.id);
                 return (
                   <div key={i} className={cn(
@@ -490,14 +506,18 @@ export default function DashboardPage() {
               <CardTitle className="text-lg">Progress Overview</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-around items-center px-4 py-8">
-              <div className="flex flex-col items-center gap-3">
-                <ProgressRing progress={progress.aptitude} radius={42} stroke={6} color="text-blue-500" label={`${progress.aptitude}%`} />
-                <span className="text-sm font-semibold text-slate-300 tracking-wide">Aptitude</span>
-              </div>
-              <div className="flex flex-col items-center gap-3">
-                <ProgressRing progress={progress.dsa} radius={42} stroke={6} color="text-purple-500" label={`${progress.dsa}%`} />
-                <span className="text-sm font-semibold text-purple-300 tracking-wide">DSA</span>
-              </div>
+              {showTechFeatures && (
+                <>
+                  <div className="flex flex-col items-center gap-3">
+                    <ProgressRing progress={progress.aptitude} radius={42} stroke={6} color="text-blue-500" label={`${progress.aptitude}%`} />
+                    <span className="text-sm font-semibold text-slate-300 tracking-wide">Aptitude</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3">
+                    <ProgressRing progress={progress.dsa} radius={42} stroke={6} color="text-purple-500" label={`${progress.dsa}%`} />
+                    <span className="text-sm font-semibold text-purple-300 tracking-wide">DSA</span>
+                  </div>
+                </>
+              )}
               <div className="flex flex-col items-center gap-3">
                 <ProgressRing progress={progress.core} radius={42} stroke={6} color="text-emerald-500" label={`${progress.core}%`} />
                 <span className="text-sm font-semibold text-emerald-300 tracking-wide">Core</span>

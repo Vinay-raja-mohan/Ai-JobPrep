@@ -43,8 +43,11 @@ export default function RoadmapPage() {
   }
 
   const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
-  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
-  const isTechRole = !user?.targetRole || techKeywords.some(kw => user?.targetRole?.toLowerCase().includes(kw));
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics", "cse", "computer", "coder", "coding"];
+  const nonTechKeywords = ["doctor", "mbbs", "medical", "nurse", "health", "bio", "architect", "civil", "mechanical", "lawyer", "law", "advocate", "teacher", "professor", "chartered", "accountant", "ca ", "journalist", "chef", "fashion", "design", "interior", "coach", "athlete", "sports", "artist", "music", "dancer", "actor", "pilot", "navy", "army", "defence", "police", "ias", "ips", "upsc", "banking", "clerk", "pharmacist", "dentist", "veterinary", "agriculture", "hotel", "hospitality", "psychology", "social"];
+  const roleLower = (user?.targetRole || "").toLowerCase();
+  const isNonTechRole = nonTechKeywords.some(kw => roleLower.includes(kw));
+  const isTechRole = !isNonTechRole && (techKeywords.some(kw => roleLower.includes(kw)) || !user?.targetRole);
   const showTechFeatures = !isSchoolLevel && isTechRole;
 
   if (loading) return (

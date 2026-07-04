@@ -46,8 +46,11 @@ export interface UserProfile {
 export async function generateRoadmap(profile: UserProfile, apiKey?: string) {
   // We limit to 1 month for now to avoid token limits, or we use 1.5-flash which handles more.
   // Let's ask for the full timeline but keep descriptions concise.
-  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics"];
-  const isTechRole = !profile.targetRole || techKeywords.some(kw => profile.targetRole.toLowerCase().includes(kw));
+  const techKeywords = ["developer", "engineer", "software", "programmer", "data", "cloud", "devops", "it", "web", "app", "cyber", "ai", "machine", "tech", "react", "python", "full stack", "frontend", "backend", "analytics", "cse", "computer", "coder", "coding"];
+  const nonTechKeywords = ["doctor", "mbbs", "medical", "nurse", "health", "bio", "architect", "civil", "mechanical", "lawyer", "law", "advocate", "teacher", "professor", "chartered", "accountant", "ca ", "journalist", "chef", "fashion", "design", "interior", "coach", "athlete", "sports", "artist", "music", "dancer", "actor", "pilot", "navy", "army", "defence", "police", "ias", "ips", "upsc", "banking", "clerk", "pharmacist", "dentist", "veterinary", "agriculture", "hotel", "hospitality", "psychology", "social"];
+  const roleLower = (profile.targetRole || "").toLowerCase();
+  const isNonTechRole = nonTechKeywords.some(kw => roleLower.includes(kw));
+  const isTechRole = !isNonTechRole && (techKeywords.some(kw => roleLower.includes(kw)) || !profile.targetRole);
   const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(profile.educationStage || "");
   const skipTechPrep = isSchoolLevel || !isTechRole;
 

@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { toast } from "sonner"
+import { GraduationCap, ArrowRight, Mail, Lock, User, Sparkles, Rocket, Target, Zap } from "lucide-react"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -46,79 +46,133 @@ export default function SignupPage() {
   }
 
   return (
-    <Card className="w-full max-w-4xl bg-[#1E293B]/80 border-white/5 backdrop-blur-xl shadow-2xl relative z-10 overflow-hidden text-white grid md:grid-cols-2">
-      {/* Left Side: Coding Visual */}
-      <div className="hidden md:flex flex-col justify-center p-8 bg-[#0F172A] border-r border-white/5 relative">
-        <div className="absolute inset-0 bg-blue-600/5 blur-3xl rounded-full"></div>
-        <div className="relative z-10 font-mono text-sm leading-relaxed">
-          <div className="flex gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-          </div>
-          <div className="text-slate-400">
-            <span className="text-purple-400">const</span> <span className="text-blue-300">newDeveloper</span> = <span className="text-purple-400">new</span> <span className="text-yellow-300">Career</span>();
-          </div>
-          <div className="pl-0 mt-2 text-slate-400">
-            <span className="text-blue-400">function</span> <span className="text-yellow-300">initProfile</span>() {"{"}
-          </div>
-          <div className="pl-4 text-slate-400">
-            <span className="text-blue-300">newDeveloper</span>.<span className="text-yellow-300">setGoals</span>([<span className="text-green-400">"FAANG"</span>, <span className="text-green-400">"Startup"</span>]);
-          </div>
-          <div className="pl-4 text-slate-400">
-            <span className="text-blue-300">newDeveloper</span>.<span className="text-yellow-300">startGrind</span>();
-          </div>
-          <div className="pl-0 text-slate-400">{"}"}</div>
+    <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-2 gap-0 mx-4">
 
-          <div className="mt-4 text-slate-500">{"// Output:"}</div>
-          <div className="text-green-400 font-bold">{"> Current Status: Hired! 🚀"}</div>
+      {/* Left Side: Hero Branding */}
+      <div className="hidden md:flex flex-col justify-center items-start p-12 relative">
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-12">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <GraduationCap className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-white text-xl font-bold tracking-tight">AI Career Prep</span>
+        </div>
+
+        {/* Hero Text */}
+        <h1 className="text-5xl font-black text-white leading-tight tracking-tight mb-6">
+          Build Your
+          <br />
+          Future With
+          <br />
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">AI Guidance.</span>
+        </h1>
+
+        <p className="text-slate-400 text-lg leading-relaxed max-w-sm mb-10">
+          Join thousands of students who are accelerating their careers with personalized AI-powered roadmaps.
+        </p>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-6 w-full max-w-sm">
+          {[
+            { icon: Rocket, value: "10K+", label: "Students" },
+            { icon: Target, value: "95%", label: "Success Rate" },
+            { icon: Zap, value: "24/7", label: "AI Mentor" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-2">
+                <stat.icon className="w-5 h-5 text-blue-400" />
+              </div>
+              <div className="text-white font-bold text-lg">{stat.value}</div>
+              <div className="text-slate-500 text-xs">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Right Side: Form */}
-      <div className="p-8 flex flex-col justify-center">
-        <CardHeader className="px-0 pt-0">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center text-slate-400">
-            Start your transformation today
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-0">
-          <form onSubmit={onSubmit} className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-slate-300">Full Name</Label>
-              <Input id="name" name="name" placeholder="John Doe" required className="bg-[#0F172A] border-slate-700 text-white placeholder:text-slate-600 focus-visible:ring-blue-500" />
+      {/* Right Side: Sign Up Card */}
+      <div className="flex items-center justify-center p-4 md:p-8">
+        <div className="w-full max-w-md bg-[#0F172A]/80 border border-white/10 backdrop-blur-2xl rounded-3xl p-8 md:p-10 shadow-2xl shadow-black/40">
+          {/* Mobile Logo */}
+          <div className="flex md:hidden items-center justify-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+              <GraduationCap className="w-6 h-6 text-white" />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-slate-300">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="dev@example.com"
-                required
-                className="bg-[#0F172A] border-slate-700 text-white placeholder:text-slate-600 focus-visible:ring-blue-500"
-              />
+            <span className="text-white text-xl font-bold">AI Career Prep</span>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-white mb-2">Create account</h2>
+            <p className="text-slate-400">Start your transformation journey today</p>
+          </div>
+
+          <form onSubmit={onSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-slate-300 text-sm font-medium">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Your full name"
+                  required
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-blue-500 rounded-xl h-12"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-slate-300">Password</Label>
-              <Input id="password" name="password" type="password" required className="bg-[#0F172A] border-slate-700 text-white focus-visible:ring-blue-500" />
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-slate-300 text-sm font-medium">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-blue-500 rounded-xl h-12"
+                />
+              </div>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-5 shadow-lg shadow-blue-900/20" disabled={loading}>
-              {loading ? "Creating..." : "Initialize Account"}
-            </Button>
-            <Button variant="outline" className="w-full border-slate-700 bg-transparent text-slate-300 hover:bg-white/5 hover:text-white">
-              Sign up with Google
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-slate-300 text-sm font-medium">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-blue-500 rounded-xl h-12"
+                />
+              </div>
+            </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold h-12 rounded-xl shadow-lg shadow-blue-600/25 transition-all duration-300"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Creating account...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Get Started <ArrowRight className="w-4 h-4" />
+                </span>
+              )}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm text-slate-400">
+
+          <p className="text-center text-sm text-slate-500 mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="underline text-blue-400 hover:text-blue-300">
+            <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
               Sign in
             </Link>
-          </div>
-        </CardContent>
+          </p>
+        </div>
       </div>
-    </Card>
+    </div>
   )
 }

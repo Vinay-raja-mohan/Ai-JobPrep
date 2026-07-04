@@ -49,8 +49,8 @@ export default function DiscoverPathPage() {
 
   async function handleDiscover(e: React.FormEvent) {
     e.preventDefault()
-    if (!skills || !interests || !workStyle) {
-      toast.error("Please fill in all fields.")
+    if (!skills || !interests || !workStyle || !educationStage) {
+      toast.error("Please fill in all fields, including your current education stage.")
       return
     }
 
@@ -67,7 +67,8 @@ export default function DiscoverPathPage() {
       })
 
       if (!res.ok) {
-        throw new Error("Failed to generate suggestions")
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || "Failed to generate suggestions");
       }
 
       const data = await res.json()
@@ -130,26 +131,6 @@ export default function DiscoverPathPage() {
       })
 
       if (!genRes.ok) throw new Error("Failed to generate roadmap")
-
-      // 3. Generate Career Path Cache
-      toast.loading("Generating your high-level Career Path... 🧭", { id: loadingToastId })
-      try {
-        const cpRes = await fetch("/api/career-path/generate", {
-          method: "POST",
-          body: JSON.stringify({ 
-            educationStage, 
-            targetRole: suggestion.jobTitle, 
-            coreSkill: suggestion.coreSkill 
-          }),
-          headers: headers,
-        })
-        if (cpRes.ok) {
-          const cpData = await cpRes.json()
-          localStorage.setItem(`careerPath_${userEmail}`, JSON.stringify(cpData.path))
-        }
-      } catch (cpErr) {
-        console.warn("Failed to generate career path pre-cache:", cpErr)
-      }
       
       toast.dismiss(loadingToastId)
       toast.success("Roadmap generated successfully!")

@@ -28,7 +28,6 @@ export async function POST(req: Request) {
       {
         "title": "A catchy title for the path, e.g., 'The Road to Software Engineering'",
         "description": "A short, encouraging paragraph summarizing the journey.",
-        "currentStepNumber": 1, // The step number that represents where the user currently is, based on their educationStage.
         "steps": [
           {
             "stepNumber": 1,

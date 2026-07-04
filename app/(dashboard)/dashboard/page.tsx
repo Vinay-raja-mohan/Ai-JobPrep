@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Zap, Shield, Brain, Code, Terminal, ChevronRight, MessageSquare, BarChart3, Percent, TrendingUp, Coins, Bot, CheckCircle, Clock, Binary, Users, Map, Hourglass, CircleDollarSign, Gauge, Hash, Compass, BookOpen } from "lucide-react"
+import { Zap, Shield, Brain, Code, Terminal, ChevronRight, MessageSquare, BarChart3, Percent, TrendingUp, Coins, Bot, CheckCircle, Clock, Binary, Users, Map, Hourglass, CircleDollarSign, Gauge, Hash, Compass, BookOpen, CalendarDays, Video } from "lucide-react"
 import { ProgressRing } from "@/components/ui/progress-ring"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -35,6 +35,12 @@ export default function DashboardPage() {
   const [generating, setGenerating] = useState(false)
   const [roadmap, setRoadmap] = useState<any>(null)
   const [progress, setProgress] = useState({ aptitude: 0, dsa: 0, core: 0 })
+
+  // Demo Booking
+  const [demoDate, setDemoDate] = useState("")
+  const [demoTime, setDemoTime] = useState("")
+  const [demoTopic, setDemoTopic] = useState("")
+  const [bookingDemo, setBookingDemo] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem("user")
@@ -108,6 +114,36 @@ export default function DashboardPage() {
   function isTaskDone(task: any, type: string) {
     if (!task || !task.resources) return false
     return task.resources.includes(`completed_${type}`)
+  }
+
+  async function bookDemo() {
+    if (!demoDate || !demoTime || !demoTopic) {
+      toast.error("Please fill in all demo booking fields.")
+      return
+    }
+    setBookingDemo(true)
+    try {
+      const res = await fetch("/api/demo/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          date: demoDate,
+          time: demoTime,
+          topic: demoTopic,
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to book demo")
+      toast.success("Demo Session Booked! 🎉" + (data.telegramSent ? " Check your Telegram!" : ""))
+      setDemoDate("")
+      setDemoTime("")
+      setDemoTopic("")
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong")
+    } finally {
+      setBookingDemo(false)
+    }
   }
 
   const isSchoolLevel = ["9th", "10th", "Intermediate"].includes(user?.educationStage || "");
@@ -494,6 +530,73 @@ export default function DashboardPage() {
               })}
             </div>
           </div>
+
+          {/* 5. Book a Demo Session */}
+          <Card className="bg-gradient-to-br from-purple-900/40 to-slate-900 border-white/5 backdrop-blur-md relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500 rounded-lg">
+                  <Video className="w-5 h-5 text-white" />
+                </div>
+                <CardTitle className="text-white">Book a Demo Session</CardTitle>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Get personalized career & course guidance from a mentor.</p>
+            </CardHeader>
+            <CardContent className="space-y-3 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-slate-400">Topic</label>
+                  <select
+                    value={demoTopic}
+                    onChange={(e) => setDemoTopic(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  >
+                    <option value="" className="bg-slate-900">Select a topic</option>
+                    <option value="Career Guidance" className="bg-slate-900">Career Guidance</option>
+                    <option value="Course Roadmap Review" className="bg-slate-900">Course Roadmap Review</option>
+                    <option value="Resume & Interview Tips" className="bg-slate-900">Resume & Interview Tips</option>
+                    <option value="Higher Education Planning" className="bg-slate-900">Higher Education Planning</option>
+                    <option value="Skill Assessment" className="bg-slate-900">Skill Assessment</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-slate-400">Date</label>
+                  <input
+                    type="date"
+                    value={demoDate}
+                    onChange={(e) => setDemoDate(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-slate-400">Time</label>
+                  <input
+                    type="time"
+                    value={demoTime}
+                    onChange={(e) => setDemoTime(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  />
+                </div>
+              </div>
+              <Button
+                onClick={bookDemo}
+                disabled={bookingDemo}
+                className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold"
+              >
+                {bookingDemo ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Booking...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <CalendarDays className="w-4 h-4" /> Book Demo
+                  </span>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
 
         </div>
 

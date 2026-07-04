@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import { User } from "@/models/User";
 import { Roadmap } from "@/models/Roadmap";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 export async function POST(req: Request) {
   try {
@@ -33,8 +34,8 @@ export async function POST(req: Request) {
     }
 
     // 4. Check if ALL valid tasks are done
-    const isAptitudeDone = taskDay.resources.includes("completed_aptitude") || taskDay.aptitudeTask?.includes("None") || !taskDay.aptitudeTask;
-    const isDsaDone = taskDay.resources.includes("completed_dsa") || taskDay.dsaTask?.includes("None") || !taskDay.dsaTask;
+    const isAptitudeDone = taskDay.aptitudeTask.includes("None - Focus on core task") ? true : taskDay.resources.includes("completed_aptitude");
+    const isDsaDone = taskDay.dsaTask.includes("None - Focus on core task") ? true : taskDay.resources.includes("completed_dsa");
     const isCoreDone = taskDay.resources.includes("completed_core");
 
     let streakIncremented = false;
@@ -97,22 +98,13 @@ export async function POST(req: Request) {
 
         user.points = (user.points || 0) + 50; // Bonus for full day
         await user.save();
-
-        // Send Telegram Notification
-        if (user.telegramChatId && process.env.TELEGRAM_BOT_TOKEN) {
-          try {
-            const message = `🎉 Congratulations! You've completed all your tasks for today (Day ${day}) on AI Career Prep! Keep up the great work! 🚀`;
-            await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: user.telegramChatId,
-                text: message
-              })
-            });
-          } catch (err) {
-            console.error("Telegram notification failed:", err);
-          }
+        
+        // Send Telegram Notification if they have an ID
+        if (user.telegramChatId) {
+          const streakText = streakIncremented ? `🔥 You're on a ${user.streak}-day streak!` : `Keep up the good work!`;
+          const msg = `🎉 <b>Congratulations ${user.name}!</b>\n\nYou've successfully completed all your daily tasks for today!\n${streakText}\n\nSee you tomorrow! 🚀`;
+          // We don't await this so it doesn't block the API response
+          sendTelegramMessage(user.telegramChatId, msg);
         }
       }
     }

@@ -18,7 +18,6 @@ interface Step {
 interface CareerPathData {
   title: string;
   description: string;
-  currentStepNumber?: number;
   steps: Step[];
 }
 
@@ -26,32 +25,33 @@ export default function CareerPathPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [pathData, setPathData] = useState<CareerPathData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [hasCheckedCache, setHasCheckedCache] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem("user")
     if (stored) {
       const parsedUser = JSON.parse(stored)
       setUser(parsedUser)
-      loadCareerPath(parsedUser)
+      
+      const cached = localStorage.getItem(`careerPath_${parsedUser.email}`)
+      if (cached) {
+        try {
+          setPathData(JSON.parse(cached))
+        } catch (e) {
+          console.error("Cache error", e)
+        }
+      }
+      setHasCheckedCache(true)
     } else {
       router.push("/login")
     }
   }, [router])
 
-  async function loadCareerPath(userData: any) {
-    const cached = localStorage.getItem(`careerPath_${userData.email}`)
-    if (cached) {
-      try {
-        setPathData(JSON.parse(cached))
-        setLoading(false)
-        return
-      } catch (e) {
-        console.error("Cache error", e)
-      }
-    }
+  async function generateCareerPath() {
+    if (!user) return
+    setLoading(true)
 
-    // Fetch from API
     try {
       const res = await fetch("/api/career-path/generate", {
         method: "POST",
@@ -60,9 +60,9 @@ export default function CareerPathPage() {
           "x-gemini-api-key": localStorage.getItem("gemini_api_key") || ""
         },
         body: JSON.stringify({
-          educationStage: userData.educationStage,
-          targetRole: userData.targetRole,
-          coreSkill: userData.coreSkill
+          educationStage: user.educationStage,
+          targetRole: user.targetRole,
+          coreSkill: user.coreSkill
         })
       })
 
@@ -70,7 +70,7 @@ export default function CareerPathPage() {
       if (!res.ok) throw new Error(data.error || "Failed to generate path")
       
       setPathData(data.path)
-      localStorage.setItem(`careerPath_${userData.email}`, JSON.stringify(data.path))
+      localStorage.setItem(`careerPath_${user.email}`, JSON.stringify(data.path))
     } catch (err: any) {
       console.error(err)
       toast.error(err.message || "Something went wrong")
@@ -80,11 +80,13 @@ export default function CareerPathPage() {
   }
 
   function handleRegenerate() {
-    if (!user) return
-    setLoading(true)
     setPathData(null)
     localStorage.removeItem(`careerPath_${user.email}`)
-    loadCareerPath(user)
+    generateCareerPath()
+  }
+
+  if (!hasCheckedCache) {
+    return null; // wait for initial check
   }
 
   if (loading) {
@@ -98,12 +100,22 @@ export default function CareerPathPage() {
 
   if (!pathData) {
     return (
-      <div className="flex flex-col h-[80vh] items-center justify-center text-slate-400 space-y-4">
-        <Compass className="w-16 h-16 text-slate-600 mb-4" />
-        <h2 className="text-2xl font-bold text-white">Path Not Found</h2>
-        <p>We couldn't map out your career path.</p>
-        <Button onClick={handleRegenerate} className="bg-blue-600 hover:bg-blue-500 text-white">
-          Try Again
+      <div className="flex flex-col h-[80vh] items-center justify-center text-slate-400 space-y-6 animate-in fade-in zoom-in duration-500">
+        <div className="bg-[#1E293B] p-6 rounded-full shadow-lg shadow-blue-900/20">
+          <Compass className="w-16 h-16 text-blue-500" />
+        </div>
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-bold text-white tracking-tight">Discover Your Career Path</h2>
+          <p className="text-slate-400 max-w-md mx-auto">
+            Let our AI map out the high-level educational and professional milestones from where you are today to your dream role.
+          </p>
+        </div>
+        <Button 
+          onClick={generateCareerPath} 
+          size="lg" 
+          className="bg-blue-600 hover:bg-blue-500 text-white font-semibold tracking-wide px-8 shadow-lg shadow-blue-500/20"
+        >
+          Generate Career Path
         </Button>
       </div>
     )
@@ -139,39 +151,27 @@ export default function CareerPathPage() {
         {pathData.steps.map((step, idx) => {
           const isFirst = idx === 0;
           const isLast = idx === pathData.steps.length - 1;
-          const isCurrent = pathData.currentStepNumber === step.stepNumber;
           const Icon = isFirst ? GraduationCap : isLast ? Briefcase : Compass;
 
           return (
-            <div key={idx} className={cn("relative flex items-start group", isCurrent ? "z-10" : "")}>
+            <div key={idx} className="relative flex items-start group">
               {/* Timeline Dot */}
               <div className={cn(
-                "absolute -left-6 md:-left-10 w-12 h-12 rounded-full border-4 border-[#020617] flex items-center justify-center -translate-x-1/2 transition-all duration-300",
-                isCurrent ? "bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-110" :
+                "absolute -left-6 md:-left-10 w-12 h-12 rounded-full border-4 border-[#020617] flex items-center justify-center -translate-x-1/2 transition-colors duration-300",
                 isLast ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]" : "bg-blue-900 group-hover:bg-blue-600 text-blue-300 group-hover:text-white"
               )}>
                 <Icon className="w-5 h-5" />
               </div>
 
               {/* Content Card */}
-              <Card className={cn(
-                "flex-1 ml-6 transition-all duration-300",
-                isCurrent 
-                  ? "bg-[#1E293B]/80 border-blue-500/50 shadow-lg shadow-blue-900/20 backdrop-blur-xl" 
-                  : "bg-[#1E293B]/40 border-white/5 backdrop-blur-md group-hover:bg-[#1E293B]/60 group-hover:border-blue-500/30"
-              )}>
+              <Card className="flex-1 ml-6 bg-[#1E293B]/40 border-white/5 backdrop-blur-md group-hover:bg-[#1E293B]/60 group-hover:border-blue-500/30 transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div className="space-y-2">
-                      <div className="flex items-center flex-wrap gap-3">
-                        <span className={cn("text-xs font-bold px-2 py-1 rounded uppercase tracking-widest", isCurrent ? "bg-blue-500 text-white" : "bg-white/5 text-slate-400")}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold px-2 py-1 rounded bg-white/5 text-slate-400 uppercase tracking-widest">
                           Step {step.stepNumber}
                         </span>
-                        {isCurrent && (
-                          <span className="text-xs font-bold text-blue-300 animate-pulse tracking-wide flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> YOU ARE HERE
-                          </span>
-                        )}
                         {step.duration && (
                           <span className="text-xs font-semibold text-blue-400 bg-blue-400/10 px-2 py-1 rounded">
                             {step.duration}

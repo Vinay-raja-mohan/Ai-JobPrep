@@ -43,13 +43,22 @@ export async function POST(req: Request) {
     const text = await generateContentWithRetry(prompt, apiKey);
 
     const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const data = JSON.parse(jsonStr);
+    let data;
+    try {
+      data = JSON.parse(jsonStr);
+    } catch (parseError) {
+      console.error("Discovery API JSON Parse Error. Raw Text:", text);
+      return NextResponse.json(
+        { error: "AI returned invalid format. Please try again." },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Discovery API Error:", error);
     return NextResponse.json(
-      { error: "Failed to generate career suggestions" },
+      { error: error.message || "Failed to generate career suggestions" },
       { status: 500 }
     );
   }

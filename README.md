@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # 🚀 AI JobPrep
 
 <div align="center">
@@ -14,7 +12,7 @@
   <br />
   <br />
   <p>
-    <b>Dominate your placement season with AI-powered roadmaps, personalized mentorship, and smart resume building.</b>
+    <b>Dominate your placement season and build your dream career with AI-powered roadmaps, personalized mentorship, and smart tracking.</b>
   </p>
 </div>
 
@@ -22,53 +20,53 @@
 
 ## 🌟 Overview
 
-**AI JobPrep** is not just another study tool; it's your personal career accelerator. We leverage the power of **Google Gemini 1.5 Flash** and **OpenAI** to create a hyper-personalized learning experience. Whether you're targeting a specialized SDE role or preparing for general aptitude tests, AI JobPrep adapts to *you*.
+**AI JobPrep** is not just another study tool; it's your personal career accelerator. We leverage the power of **Google Gemini 2.5 Flash** to create a hyper-personalized learning experience. Whether you're a high school student aiming to become a Doctor, or a college graduate targeting a Full-Stack Engineering role, AI JobPrep adapts entirely to *you*.
 
 ### Why AI JobPrep?
-*   **🧠 Intelligent Guidance:** Forget generic advice. Our AI analyzes your goal and timeline to build a custom roadmap.
-*   **⚡ Real-time Feedback:** Get instant coding reviews and resume optimization tips.
-*   **🎮 Gamified Learning:** Turn preparation into a game with streaks, XP, and badges.
+*   **🧠 Intelligent Guidance:** Forget generic advice. Our AI analyzes your current education level, target role, and timeline to build custom roadmaps and master career trajectories.
+*   **⚡ Real-time Feedback & Notifications:** Get instant roadmap generation and Telegram notifications congratulating you when you complete your daily tasks.
+*   **🎮 Gamified Learning:** Turn preparation into a game with dynamic badges, streaks, and XP points tailored to your specific field.
 
 ---
 
 ## ✨ Key Features
 
-### 🎯 AI-Generated Roadmaps
-Stop guessing what to study. Enter your target role (e.g., "Full Stack Developer") and timeline (e.g., "3 Months"), and watch our AI craft a **week-by-week, day-by-day plan** covering:
-*   **DSA (Data Structures & Algorithms)**
-*   **Aptitude & Logical Reasoning**
-*   **Core CS Subjects (OS, DBMS, CN)**
+### 🎯 Dynamic Career Path Generator
+Curious how to get from 10th grade to a Machine Learning Engineer? Generate a highly visual, step-by-step master trajectory outlining the degrees, exams, and milestones needed to reach your ultimate goal. 
+
+### 🗺️ AI-Generated Roadmaps
+Stop guessing what to study. Enter your target role and watch our AI craft a **week-by-week, day-by-day plan**.
+*   **For IT Roles:** Covers DSA, Aptitude, and Core Skills.
+*   **For Non-IT & School Students:** Automatically adapts by removing DSA/Aptitude and deeply focusing on core subjects (e.g., Biology, Physics, Design) and foundational knowledge.
+
+### 📱 Telegram Task Notifications
+Never break your streak! Upon successfully finishing your daily roadmap tasks, the platform instantly sends a congratulatory Telegram notification right to your phone, keeping you motivated.
 
 ### 📝 Smart Resume Builder
 Build a resume that beats the ATS (Applicant Tracking System).
 *   **AI Objective Writer:** Rewrites your career objective to align perfectly with a specific Job Description.
-*   **Auto-Save:** Never lose your progress.
 *   **Professional Templates:** Clean, ATS-friendly PDF export.
 
 ### 🤖 AI Mentor Chat
-Stuck on a concept? Feeling demotivated? Chat with our **AI Mentor**.
-*   **Restricted Domain:** Strictly professional. It won't discuss movies or politics—only career advice, technical concepts, and motivation.
-*   **Context Aware:** Knows your current roadmap progress and streak.
+Stuck on a concept? Chat with our **AI Mentor**.
+*   **Context Aware:** Knows your current roadmap progress, your education stage, and your streak. It provides tailored guidance whether you're studying React.js or Anatomy.
 
 ### ✅ Daily Missions & Gamification
-*   **Daily Tasks:** Bite-sized goals generated every day based on your roadmap.
-*   **Streak System:** Keep your momentum going.
-*   **Leaderboard:** Compete with peers for the top spot.
+*   **Adaptive Badges:** Earn the "Knowledge Seeker" badge for Core topics or the "DSA Crusher" badge for IT roles. 
+*   **Streak System:** Keep your momentum going and watch your points grow.
 
 ---
 
 ## 🛠️ Technology Stack
 
-We use the latest and greatest tech to ensure speed, scalability, and developer experience.
-
 | Category | Tech Stack |
 | :--- | :--- |
-| **Frontend** | Next.js 16 (App Router), React 19, Tailwind CSS 4, Shadcn/UI |
+| **Frontend** | Next.js 16 (App Router), React 19, Tailwind CSS 4, Shadcn/UI, Lucide Icons |
 | **Backend** | Next.js API Routes (Serverless), Node.js |
 | **Database** | MongoDB Atlas (with Mongoose ODM) |
-| **AI Engine** | Google Gemini 1.5 Flash, OpenAI API |
+| **AI Engine** | Google Gemini 2.5 Flash |
+| **Integrations**| Telegram Bot API |
 | **Auth** | Custom Auth (Bcrypt + JWT/Session) |
-| **Validation** | Zod + React Hook Form |
 
 ---
 
@@ -80,6 +78,7 @@ Follow these steps to set up the project locally.
 *   Node.js 18+
 *   MongoDB Atlas URI
 *   Google Gemini API Key
+*   Telegram Bot Token (Optional for notifications)
 
 ### Installation
 
@@ -92,8 +91,6 @@ Follow these steps to set up the project locally.
 2.  **Install Dependencies**
     ```bash
     npm install
-    # or
-    yarn install
     ```
 
 3.  **Configure Environment**
@@ -101,6 +98,7 @@ Follow these steps to set up the project locally.
     ```env
     MONGODB_URI=your_mongodb_connection_string
     GEMINI_API_KEY=your_google_gemini_key
+    TELEGRAM_BOT_TOKEN=your_telegram_bot_token
     NEXT_PUBLIC_APP_URL=http://localhost:3000
     ```
 
@@ -114,39 +112,8 @@ Follow these steps to set up the project locally.
 
 ---
 
-## 🤝 Contributing
-
-We love open source! Here's how you can help:
-
-1.  **Fork** the repo on GitHub.
-2.  **Clone** your fork locally.
-3.  **Create a Branch** (`git checkout -b feature/AmazingFeature`).
-4.  **Commit** your changes (`git commit -m 'Add AmazingFeature'`).
-5.  **Push** to the branch (`git push origin feature/AmazingFeature`).
-6.  Open a **Pull Request**.
-
----
-
 ## 👤 Maintainer
 
 **Vinay Raja Mohan**
 *   [GitHub Profile](https://github.com/Vinay-raja-mohan)
 *   [LinkedIn](https://linkedin.com/in/vinay-raja-mohan)
-
----
-
-## Maintainer Info
-
-**Vinay Raja Mohan**
-
-- GitHub: [Vinay-raja-mohan](https://github.com/Vinay-raja-mohan)
-
-## Relevant Resources
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [npm Documentation](https://docs.npmjs.com/)
-- [AI Job Prep Wiki](./wiki)
-
-<div align="center">
-  <sub>Built with ❤️ by the AI JobPrep Team. Licensed under MIT.</sub>
-</div>

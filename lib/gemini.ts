@@ -24,6 +24,9 @@ export async function generateContentWithRetry(prompt: string, apiKey?: string, 
         await new Promise(resolve => setTimeout(resolve, (i + 1) * 1000));
         continue;
       }
+      if (error.message?.includes("429")) {
+        throw new Error("API Rate Limit Exceeded. Please wait 15 seconds and try again.");
+      }
       throw error;
     }
   }

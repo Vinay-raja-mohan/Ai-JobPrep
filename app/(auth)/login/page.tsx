@@ -42,7 +42,7 @@ export default function LoginPage() {
 
       // Redirect based on if profile is complete
       if (!data.user.targetRole) {
-        router.push("/profile-setup")
+        router.push("/discover")
       } else {
         router.push("/dashboard")
       }

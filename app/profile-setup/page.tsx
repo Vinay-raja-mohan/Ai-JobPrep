@@ -5,7 +5,8 @@ import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -17,14 +18,14 @@ import { toast } from "sonner"
 import { ApiKeyDialog } from "@/components/ApiKeyDialog"
 
 const formSchema = z.object({
-  targetRole: z.string().min(1, "Please select a target role."),
-  coreSkill: z.string().min(1, "Please select a core skill."),
+  targetRole: z.string().min(1, "Please enter a target role."),
+  coreSkill: z.string().min(1, "Please enter a core skill."),
   currentLevel: z.enum(["Beginner", "Intermediate", "Advanced"]),
   dailyStudyTime: z.number().min(15).max(480),
   goalTimeline: z.enum(["3 months", "6 months"]),
 })
 
-export default function ProfileSetupPage() {
+function ProfileSetupForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
@@ -43,9 +44,19 @@ export default function ProfileSetupPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      targetRole: "",
+      coreSkill: "",
       dailyStudyTime: 60,
     },
   })
+
+  useEffect(() => {
+    // Hydrate AI suggestions if available
+    const role = localStorage.getItem("discoveredRole")
+    const skill = localStorage.getItem("discoveredSkill")
+    if (role) form.setValue("targetRole", role)
+    if (skill) form.setValue("coreSkill", skill)
+  }, [form])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true)
@@ -121,21 +132,13 @@ export default function ProfileSetupPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-slate-300">Target Job Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-[#0F172A] border-slate-700 text-white">
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-[#1E293B] border-slate-700 text-white">
-                        <SelectItem value="Software Developer">Software Developer</SelectItem>
-                        <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
-                        <SelectItem value="Backend Developer">Backend Developer</SelectItem>
-                        <SelectItem value="Full Stack Developer">Full Stack Developer</SelectItem>
-                        <SelectItem value="Data Analyst">Data Analyst</SelectItem>
-                        <SelectItem value="Data Scientist">Data Scientist</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input 
+                        placeholder="e.g. Frontend Developer" 
+                        {...field} 
+                        className="bg-[#0F172A] border-slate-700 text-white" 
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -147,20 +150,13 @@ export default function ProfileSetupPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-slate-300">Primary Tech Stack / Skill</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-[#0F172A] border-slate-700 text-white">
-                          <SelectValue placeholder="Select a core skill" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-[#1E293B] border-slate-700 text-white">
-                        <SelectItem value="React/Next.js">React / Next.js</SelectItem>
-                        <SelectItem value="Java/Spring">Java / Spring</SelectItem>
-                        <SelectItem value="Python/Django">Python / Django</SelectItem>
-                        <SelectItem value="Node.js/Express">Node.js / Express</SelectItem>
-                        <SelectItem value="C++/Systems">C++ / Systems</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input 
+                        placeholder="e.g. React / Next.js" 
+                        {...field} 
+                        className="bg-[#0F172A] border-slate-700 text-white" 
+                      />
+                    </FormControl>
                     <FormDescription className="text-slate-500">
                       We'll focus your core learning modules on this.
                     </FormDescription>
@@ -271,5 +267,13 @@ export default function ProfileSetupPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function ProfileSetupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0F172A] flex items-center justify-center text-white">Loading...</div>}>
+      <ProfileSetupForm />
+    </Suspense>
   )
 }

@@ -7,9 +7,29 @@ export function getGeminiModel(apiKey?: string) {
     throw new Error("No API Key provided. Please set GEMINI_API_KEY env var or pass it dynamically.");
   }
   const genAI = new GoogleGenerativeAI(key);
-  // "gemini-2.5-flash" is confirmed available for this user key
+  // Reverting to gemini-2.5-flash as requested by the user, and it's the valid model for this key
   return genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 }
+
+export async function generateContentWithRetry(prompt: string, apiKey?: string, maxRetries = 2) {
+  const model = getGeminiModel(apiKey);
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
+    } catch (error: any) {
+      if (error.message?.includes("503") && i < maxRetries) {
+        console.log(`503 Service Unavailable on try ${i+1}. Retrying in ${i + 1}s...`);
+        await new Promise(resolve => setTimeout(resolve, (i + 1) * 1000));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error("Failed to generate content after retries");
+}
+
 
 export interface UserProfile {
   targetRole: string;
@@ -80,10 +100,7 @@ export async function generateRoadmap(profile: UserProfile, apiKey?: string) {
     `;
 
   try {
-    const model = getGeminiModel(apiKey);
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = await generateContentWithRetry(prompt, apiKey);
 
     console.log("--- GEMINI RAW RESPONSE ---");
     console.log(text.substring(0, 500) + "..."); // Log first 500 chars

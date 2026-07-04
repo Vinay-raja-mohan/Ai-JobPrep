@@ -9,8 +9,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI JobPrep - Your Personal AI Placement Mentor",
-  description: "AI-powered placement preparation and consistency platform",
+  title: "AI Career Prep - Your Personal AI Placement Mentor",
+  description: "Generate a personalized study roadmap and start tracking your preparation today.",
 };
 
 export default function RootLayout({

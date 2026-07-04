@@ -9,10 +9,9 @@ import {
   GraduationCap,
   Map,
   Bot,
-
   Settings,
-  Sliders,
   FileText,
+  UserCheck,
   LogOut,
   Trash2
 } from "lucide-react"
@@ -27,6 +26,7 @@ const sidebarLinks = [
   { href: "/core-skills", label: "Core Skills", icon: GraduationCap },
   { href: "/resume", label: "Resume Builder", icon: FileText },
   { href: "/mentor", label: "AI Mentor", icon: Bot },
+  { href: "/interview", label: "AI Interview", icon: UserCheck },
 ]
 
 export function Sidebar() {
@@ -39,7 +39,7 @@ export function Sidebar() {
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
           <GraduationCap className="w-5 h-5 text-white" />
         </div>
-        <div className="font-bold text-xl text-white tracking-tight">AI JobPrep</div>
+        <div className="font-bold text-xl text-white tracking-tight">AI Career Prep</div>
       </div>
 
       {/* Navigation */}
@@ -75,13 +75,6 @@ export function Sidebar() {
           >
             <Settings className="w-3.5 h-3.5 group-hover:text-blue-400" /> Settings
           </Link>
-          <Link
-            href="/settings"
-            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-1 py-1 transition-colors group"
-          >
-            <Sliders className="w-3.5 h-3.5 group-hover:text-blue-400" /> Preferences
-          </Link>
-
 
           <ApiKeyDialog className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-1 py-1 transition-colors cursor-pointer group" />
         </div>

@@ -9,6 +9,7 @@ export interface IUser {
   dob?: Date;
   gender?: string;
   phone?: string;
+  telegramChatId?: string;
   university?: string;
   graduationYear?: string;
   bio?: string;
@@ -51,6 +52,7 @@ const UserSchema = new Schema<IUser>({
   dob: { type: Date },
   gender: { type: String },
   phone: { type: String },
+  telegramChatId: { type: String },
   university: { type: String },
   graduationYear: { type: String },
   bio: { type: String },

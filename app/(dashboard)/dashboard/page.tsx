@@ -143,13 +143,25 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <div className="hidden md:block text-right mr-4">
             <div className="text-sm text-slate-400">Current Roadmap</div>
             <div className="font-semibold text-white flex items-center justify-end gap-2">
               {user?.goalTimeline || "6 Months"} Plan <ChevronRight className="w-4 h-4" />
             </div>
           </div>
+          
+          <Button 
+            variant="outline" 
+            className="border-green-500/30 text-green-400 hover:bg-green-500/10 hover:text-green-300 transition-colors hidden sm:flex h-10"
+            onClick={() => {
+              const text = `Hey! I'm preparing for the ${user?.targetRole || 'Software Engineer'} role using AI Career Prep's AI-generated roadmap! 🚀`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            }}
+          >
+            <MessageSquare className="w-4 h-4 mr-2" /> WhatsApp Share
+          </Button>
+
           {/* Notification Bell Placeholder */}
           <div className="w-10 h-10 rounded-full bg-[#1E293B] flex items-center justify-center border border-white/5 cursor-pointer hover:bg-white/10 transition-colors relative">
             <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
@@ -157,6 +169,91 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Telegram Integration Banner */}
+      {!user?.telegramChatId ? (
+        <Card className="border-blue-500/30 bg-blue-500/10 backdrop-blur-xl shadow-xl relative overflow-hidden group">
+          <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-500/20 rounded-full">
+                <MessageSquare className="w-8 h-8 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Connect Telegram for Daily Reminders</h3>
+                <p className="text-slate-300 text-sm">Message our BotFather bot to get your Chat ID, then paste it below!</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <input 
+                type="text" 
+                placeholder="e.g. 123456789" 
+                id="telegramInput"
+                className="bg-[#0F172A] border border-slate-700 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Button 
+                className="bg-blue-600 hover:bg-blue-500 text-white"
+                onClick={async () => {
+                  const input = document.getElementById("telegramInput") as HTMLInputElement;
+                  if (!input.value) return;
+                  try {
+                    const res = await fetch("/api/user/profile", {
+                      method: "PATCH",
+                      body: JSON.stringify({ email: user.email, telegramChatId: input.value }),
+                      headers: { "Content-Type": "application/json" }
+                    });
+                    if(res.ok) {
+                      const data = await res.json();
+                      setUser(data.user);
+                      localStorage.setItem("user", JSON.stringify(data.user));
+                      toast.success("Telegram Connected!");
+                    }
+                  } catch(e) {
+                    toast.error("Failed to connect Telegram");
+                  }
+                }}
+              >
+                Connect
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-blue-500/30 bg-blue-500/5 backdrop-blur-xl shadow-xl relative overflow-hidden group">
+          <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-500/20 rounded-full">
+                <MessageSquare className="w-8 h-8 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Telegram Integration Active</h3>
+                <p className="text-slate-300 text-sm">Connected to Chat ID {user.telegramChatId}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                onClick={async () => {
+                  const toastId = toast.loading("Sending reminder...");
+                  try {
+                    const res = await fetch("/api/telegram/remind", {
+                      method: "POST",
+                      body: JSON.stringify({ email: user.email }),
+                      headers: { "Content-Type": "application/json" }
+                    });
+                    if(res.ok) toast.success("Reminder sent via Telegram!", { id: toastId });
+                    else toast.error("Failed to send reminder", { id: toastId });
+                  } catch(e) {
+                    toast.error("Error sending reminder", { id: toastId });
+                  }
+                }}
+              >
+                <Zap className="w-4 h-4 mr-2" /> Test Reminder
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
@@ -198,7 +295,7 @@ export default function DashboardPage() {
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
                     }`}
-                    onClick={() => !isTaskDone(currentTask, "aptitude") && router.push(`/learn/${encodeURIComponent(currentTask.aptitudeTask.split(":")[0])}?type=aptitude`)}>
+                    onClick={() => !isTaskDone(currentTask, "aptitude") && router.push(`/learn/${encodeURIComponent(formatTaskTitle(currentTask.aptitudeTask))}?type=aptitude`)}>
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg border ${isTaskDone(currentTask, "aptitude")
                         ? "bg-green-500/10 border-green-500/20 text-green-500"
@@ -232,7 +329,7 @@ export default function DashboardPage() {
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
                     }`}
-                    onClick={() => !isTaskDone(currentTask, "dsa") && router.push(`/learn/${encodeURIComponent(currentTask.dsaTask.split(":")[0])}?type=dsa`)}>
+                    onClick={() => !isTaskDone(currentTask, "dsa") && router.push(`/learn/${encodeURIComponent(formatTaskTitle(currentTask.dsaTask))}?type=dsa`)}>
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg border ${isTaskDone(currentTask, "dsa")
                         ? "bg-green-500/10 border-green-500/20 text-green-500"
@@ -266,7 +363,7 @@ export default function DashboardPage() {
                     ? "bg-green-500/5 border-green-500/10 cursor-default"
                     : "bg-[#1E293B]/50 hover:border-blue-500/30 cursor-pointer"
                     }`}
-                    onClick={() => !isTaskDone(currentTask, "core") && router.push(`/learn/${encodeURIComponent(currentTask.coreTask.split(":")[0])}`)}>
+                    onClick={() => !isTaskDone(currentTask, "core") && router.push(`/learn/${encodeURIComponent(formatTaskTitle(currentTask.coreTask))}`)}>
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-lg border ${isTaskDone(currentTask, "core")
                         ? "bg-green-500/10 border-green-500/20 text-green-500"

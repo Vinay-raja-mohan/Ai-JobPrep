@@ -13,7 +13,7 @@ export default function Home() {
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
             <Sparkles className="w-6 h-6 fill-white" />
           </div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">JobPrep.AI</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">AI Career Prep</span>
         </div>
         <nav className="hidden md:flex gap-8 text-sm font-medium text-slate-300">
           <Link href="#how-it-works" className="hover:text-blue-400 transition-colors">How It Works</Link>
@@ -53,15 +53,17 @@ export default function Home() {
                 Start Preparing Free <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-slate-700 text-slate-300 hover:bg-white/5 hover:text-white hover:border-slate-500 transition-all w-full sm:w-auto">
-              View Demo
-            </Button>
+            <Link href="/discover">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-purple-500/30 text-purple-300 hover:bg-purple-500/10 hover:text-purple-200 hover:border-purple-500/50 transition-all w-full sm:w-auto">
+                <Sparkles className="mr-2 h-5 w-5" /> Discover My Path
+              </Button>
+            </Link>
           </div>
 
           <div className="mt-20 w-full max-w-6xl rounded-2xl border border-white/10 bg-[#1E293B]/40 backdrop-blur-sm shadow-2xl relative overflow-hidden group">
             <div className="relative aspect-video w-full">
               <Image
-                src="/dashboard-real.png"
+                src="/dashboard-1-streak.png"
                 alt="Dashboard Preview"
                 fill
                 className="object-cover"
@@ -109,7 +111,7 @@ export default function Home() {
       </main>
 
       <footer className="py-10 text-center text-sm text-slate-500 border-t border-white/5 bg-[#0F172A]">
-        <p>© 2026 AI JobPrep. Built for the Hackathon.</p>
+        <p>© 2026 AI Career Prep. Built for the Hackathon.</p>
       </footer>
     </div>
   );

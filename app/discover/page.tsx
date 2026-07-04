@@ -112,7 +112,10 @@ export default function DiscoverPathPage() {
         headers: { "Content-Type": "application/json" },
       })
 
-      if (!res.ok) throw new Error("Failed to update profile")
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to update profile");
+      }
       const profileData = await res.json()
       localStorage.setItem("user", JSON.stringify(profileData.user))
       localStorage.setItem("discoveredRole", suggestion.jobTitle)

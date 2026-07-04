@@ -69,7 +69,10 @@ export default function ProfilePage() {
         headers: { "Content-Type": "application/json" }
       })
 
-      if (!res.ok) throw new Error("Failed to update profile")
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to update profile");
+      }
 
       const data = await res.json()
 
